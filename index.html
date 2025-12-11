@@ -1,0 +1,80 @@
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Place Your Order</h2>
+
+  <form id="orderForm">
+    <div class="form-group">
+      <input type="text" id="name" placeholder="Full Name" required>
+      <i class="fas fa-user"></i>
+    </div>
+
+    <div class="form-group">
+      <input type="text" id="contact" placeholder="Contact Info" required>
+      <i class="fas fa-phone"></i>
+    </div>
+
+    <div class="form-group">
+      <select id="item" required>
+        <option value="">Select Product</option>
+        <option value="Product A">Product A</option>
+        <option value="Product B">Product B</option>
+        <option value="Product C">Product C</option>
+      </select>
+      <i class="fas fa-box"></i>
+    </div>
+
+    <div class="form-group">
+      <input type="number" id="qty" placeholder="Quantity" min="1" required>
+      <i class="fas fa-sort-numeric-up"></i>
+    </div>
+
+    <div class="form-group">
+      <textarea id="notes" placeholder="Additional Notes"></textarea>
+      <i class="fas fa-sticky-note"></i>
+    </div>
+
+    <button type="submit">Submit Order</button>
+  </form>
+
+  <p id="status"></p>
+</div>
+
+<!-- FontAwesome for icons -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+<script>
+  const webAppUrl = "https://script.google.com/macros/s/AKfycbwjcA7C9klIk7TjOn0H9U-Iw2uD9uQJaPcXTMqFMRsqs-SfBS8eWSsLCOmtkRop66GMQQ/exec"; // Replace with your deployed Apps Script URL
+
+  document.getElementById('orderForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const data = {
+      name: document.getElementById('name').value,
+      contact: document.getElementById('contact').value,
+      item: document.getElementById('item').value,
+      qty: document.getElementById('qty').value,
+      notes: document.getElementById('notes').value
+    };
+
+    fetch(webAppUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+      document.getElementById('status').innerText = 
+        result.status === "success" ? "✅ Order submitted!" : "❌ Error: " + result.message;
+      if (result.status === "success") {
+        document.getElementById('orderForm').reset();
+      }
+    })
+    .catch(error => {
+      document.getElementById('status').innerText = "❌ Error: " + error;
+    });
+  });
+</script>
+</body>
+</html>
