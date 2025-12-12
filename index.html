@@ -1152,37 +1152,14 @@
   });
   
   // Format message
-  const formattedMessage = `✅ Order Confirmed!\n\nOrder #${orderNumber}\n\n${orderDetails}\n\nTotal: ${totalAmount}\n\nThank you for your order! We'll prepare it and contact you shortly.\n\n- East Moon Restaurant 🥡`;
+function sendToBotpressAndRedirect(orderNumber, orderDetails, totalAmount, customerData) {
+  // Apps Script already sent to Botpress, just redirect to WhatsApp
+  console.log('Order confirmed, redirecting to WhatsApp...');
   
-  // Send to Botpress webhook with FLAT structure
-  fetch(BOTPRESS_WEBHOOK, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      phoneNumber: customerData.phoneNumber,
-      cleanPhoneNumber: cleanPhone,
-      orderNumber: orderNumber,
-      customerName: customerData.customerName,
-      deliveryAddress: customerData.deliveryAddress,
-      orderType: customerData.orderType,
-      orderDetails: orderDetails,
-      totalAmount: totalAmount,
-      confirmationMessage: formattedMessage,
-      timestamp: new Date().toISOString()
-    })
-  })
-  .then(response => {
-    console.log('Botpress webhook response status:', response.status);
-    return response.json();
-  })
-  .then(data => {
-    console.log('Botpress webhook response:', data);
-  })
-  .catch(error => {
-    console.error('Error sending to Botpress:', error);
-  })
+  setTimeout(() => {
+    window.location.href = `https://wa.me/${WHATSAPP_NUMBER}`;
+  }, 500);
+}
   .finally(() => {
     // Redirect to WhatsApp regardless of webhook result
     setTimeout(() => {
