@@ -1145,46 +1145,12 @@
       // Format order message
       const formattedMessage = `✅ Order Confirmed!\n\nOrder #${orderNumber}\n\n${orderDetails}\n\nTotal: ${totalAmount}\n\nThank you for your order! We'll prepare it and contact you shortly.\n\n- East Moon Restaurant 🥡`;
       
-      // Send to Botpress webhook
-      fetch(BOTPRESS_WEBHOOK, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          type: 'text',
-          text: formattedMessage,
-          userId: customerData.phoneNumber.replace(/[^0-9]/g, ''), // Clean phone number
-          channel: 'whatsapp',
-          conversationId: customerData.phoneNumber.replace(/[^0-9]/g, ''),
-          eventType: 'proactive',
-          payload: {
-            orderNumber: orderNumber,
-            customerName: customerData.customerName,
-            phoneNumber: customerData.phoneNumber,
-            deliveryAddress: customerData.deliveryAddress,
-            orderType: customerData.orderType,
-            orderDetails: orderDetails,
-            totalAmount: totalAmount,
-            timestamp: new Date().toISOString()
-          }
-        })
-      })
-      .then(response => {
-        console.log('Order confirmation sent to Botpress');
-        return response.json();
-      })
-      .then(data => {
-        console.log('Botpress response:', data);
-      })
-      .catch(error => {
-        console.error('Error sending to Botpress:', error);
-      })
-      .finally(() => {
-        // Redirect to WhatsApp regardless of webhook result
-        window.location.href = `https://wa.me/${WHATSAPP_NUMBER}`;
-      });
-    }
+      // Send to Apps Script
+     fetch(SCRIPT_URL, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(orderData)
+});
     
     // Form submission
     document.getElementById('orderForm').addEventListener('submit', async function(e) {
