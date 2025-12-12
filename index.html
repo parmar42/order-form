@@ -934,32 +934,44 @@
   </div>
 
   <!-- Success Modal -->
-  <div id="successModal" class="success-modal">
-    <div class="success-modal-content">
-      <div class="success-checkmark">✓</div>
-      <h2>Order Confirmed! 🎉</h2>
-      
-      <div class="order-number">
-        <span>Your Order Number:</span>
-        <strong id="modalOrderNumber">EM12121234</strong>
-      </div>
-      
-      <p>
-        Thank you for your order! We've received it and will contact you shortly to confirm your order details.
-      </p>
-      
-      <div class="info-box">
-        <strong>📞 We'll call you soon!</strong>
-        We will contact you at the phone number you provided to confirm delivery details.
-      </div>
-      
-      <p style="font-size: 14px; margin-top: 15px;">
-        <strong>Payment:</strong> Cash only on delivery or pickup.
-      </p>
-      
-      <button class="close-modal-btn" onclick="closeSuccessModal()">Place Another Order</button>
+<div id="successModal" class="success-modal">
+  <div class="success-modal-content">
+    <div class="success-checkmark">✓</div>
+    <h2>Order Confirmed! 🎉</h2>
+    
+    <div class="order-number">
+      <span>Your Order Number:</span>
+      <strong id="modalOrderNumber">EM12121234</strong>
     </div>
+    
+    <p>
+      Thank you for your order! We've received it and will contact you shortly to confirm your order details.
+    </p>
+    
+    <div class="info-box">
+      <strong>📞 We'll call you soon!</strong>
+      We will contact you at the phone number you provided to confirm delivery details.
+    </div>
+    
+    <p style="font-size: 14px; margin-top: 15px;">
+      <strong>Payment:</strong> Cash only on delivery or pickup.
+    </p>
+    
+    <!-- Countdown Display -->
+    <div style="margin: 30px 0; padding: 20px; background: #e3f2fd; border-radius: 10px; border-left: 4px solid #2196F3;">
+      <p style="color: #1976d2; margin: 0; font-size: 18px; text-align: center;">
+        <strong>📱 Redirecting to WhatsApp in</strong>
+      </p>
+      <p style="margin: 10px 0 0 0; text-align: center;">
+        <span id="redirectCountdown" style="font-size: 48px; font-weight: bold; color: #DC143C; display: inline-block;">5</span>
+      </p>
+    </div>
+    
+    <p style="font-size: 13px; color: #999; text-align: center; margin-top: 15px;">
+      Please wait while we redirect you...
+    </p>
   </div>
+</div>
 
       <script>
   // ⚠️ IMPORTANT: REPLACE WITH YOUR ACTUAL APPS SCRIPT URL
