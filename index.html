@@ -874,11 +874,13 @@
   <script>
     let orderItems = [];
     
+    // IMPORTANT: Replace this with your actual Apps Script Web App URL
+    const SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_ACTUAL_SCRIPT_ID/exec';
+    
     function toggleCategory(categoryId, headerElement) {
       const category = document.getElementById(categoryId);
       const isCurrentlyShown = category.classList.contains('show');
       
-      // Close all categories
       document.querySelectorAll('.menu-items').forEach(items => {
         items.classList.remove('show');
       });
@@ -886,7 +888,6 @@
         header.classList.remove('active');
       });
       
-      // Open clicked category if it was closed
       if (!isCurrentlyShown) {
         category.classList.add('show');
         headerElement.classList.add('active');
@@ -965,7 +966,6 @@
       if (orderItems.length > 0) {
         summaryDiv.style.display = 'block';
         
-        // Display items
         summaryItems.innerHTML = orderItems.map(item => `
           <div class="summary-item">
             <span>${item.name} × ${item.quantity}</span>
@@ -973,7 +973,6 @@
           </div>
         `).join('');
         
-        // Calculate totals
         let calculationsHTML = `
           <div class="summary-subtotal">
             <span>Subtotal:</span>
@@ -1008,7 +1007,7 @@
       }
     }
     
-    document.getElementById('orderForm').addEventListener('submit', function(e) {
+    document.getElementById('orderForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
       if (orderItems.length === 0) {
@@ -1040,54 +1039,58 @@
       
       const totalAmount = '$' + total.toFixed(2) + ' BBD';
       
+      // Prepare data to send
+      const formData = {
+        customerName: customerName,
+        phoneNumber: phoneNumber,
+        deliveryAddress: deliveryAddress,
+        orderType: orderType,
+        orderItems: orderDetails,
+        totalAmount: totalAmount,
+        specialInstructions: specialInstructions
+      };
+      
+      // Show loading
       document.getElementById('loading').style.display = 'block';
       document.getElementById('submitBtn').disabled = true;
       document.getElementById('submitBtn').textContent = 'Submitting...';
       
-      google.script.run
-        .withSuccessHandler(onSuccess)
-        .withFailureHandler(onFailure)
-        .submitOrder(
-          customerName,
-          phoneNumber,
-          deliveryAddress,
-          orderType,
-          orderDetails,
-          totalAmount,
-          specialInstructions
-        );
-    });
-    
-    function onSuccess(response) {
-      document.getElementById('loading').style.display = 'none';
-      const submitBtn = document.getElementById('submitBtn');
-      
-      if (response && response.success) {
-        showMessage('✓ ' + response.message + ' Order #' + response.orderNumber, 'success');
+      try {
+        // Make POST request to Apps Script
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors', // Important for cross-origin requests
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData)
+        });
+        
+        // Note: With no-cors mode, we can't read the response
+        // So we assume success if no error is thrown
+        document.getElementById('loading').style.display = 'none';
+        showMessage('✓ Order submitted successfully! We will contact you shortly.', 'success');
+        
+        // Reset form
         document.getElementById('orderForm').reset();
         document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
         document.querySelectorAll('.menu-items').forEach(el => el.classList.remove('show'));
         document.querySelectorAll('.category-header').forEach(el => el.classList.remove('active'));
         orderItems = [];
         updateOrder();
-        submitBtn.textContent = 'Submit Order';
-        submitBtn.disabled = false;
+        
+        document.getElementById('submitBtn').textContent = 'Submit Order';
+        document.getElementById('submitBtn').disabled = false;
         window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        const errorMsg = response && response.message ? response.message : 'Unknown error';
-        showMessage('✗ ' + errorMsg, 'error');
-        submitBtn.textContent = 'Submit Order';
-        submitBtn.disabled = false;
+        
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('submitBtn').disabled = false;
+        document.getElementById('submitBtn').textContent = 'Submit Order';
+        showMessage('✗ Error submitting order. Please try again or call us directly.', 'error');
       }
-    }
-    
-    function onFailure(error) {
-      document.getElementById('loading').style.display = 'none';
-      const submitBtn = document.getElementById('submitBtn');
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Submit Order';
-      showMessage('✗ Error: ' + error.message, 'error');
-    }
+    });
     
     function showMessage(text, type) {
       const msg = document.getElementById('message');
@@ -1102,4 +1105,5 @@
     }
   </script>
 </body>
+
 </html>
