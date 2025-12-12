@@ -973,8 +973,10 @@
 
   <script>
     // ⚠️ IMPORTANT: REPLACE THESE VALUES
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyC7mlsWtETvrLDPVr99XaOvwjLlAhQI9ek1oqiOUkN_5fObtxOyJHcBrg2oOppZCZ8mg/exec';
-        
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsRn158OHQGc0LN1uCNNhuqEnv7-rKmVmLQW1ctxo4nx0HBgoGZcrqGDuJTYMMLoonCA/exec';
+    const BOTPRESS_WEBHOOK = 'https://webhook.botpress.cloud/18ba5665-1857-4e37-b976-d34c8c76572b'; // e.g., https://webhook.botpress.cloud/YOUR_BOT_ID
+    const WHATSAPP_NUMBER = '12462367556'; // Your restaurant's WhatsApp number
+    
     let orderItems = [];
     
     // Category toggle
@@ -1139,16 +1141,55 @@
       }
     }
     
-    
-      // Format order message
-      const formattedMessage = `✅ Order Confirmed!\n\nOrder #${orderNumber}\n\n${orderDetails}\n\nTotal: ${totalAmount}\n\nThank you for your order! We'll prepare it and contact you shortly.\n\n- East Moon Restaurant 🥡`;
-      
-      // Send to Apps Script
-     fetch(SCRIPT_URL, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(orderData)
-});
+   function sendToBotpressAndRedirect(orderNumber, orderDetails, totalAmount, customerData) {
+  // Clean phone number
+  const cleanPhone = customerData.phoneNumber.replace(/[^0-9]/g, '');
+  
+  console.log('Sending to Botpress:', {
+    phoneNumber: customerData.phoneNumber,
+    cleanPhone: cleanPhone,
+    orderNumber: orderNumber
+  });
+  
+  // Format message
+  const formattedMessage = `✅ Order Confirmed!\n\nOrder #${orderNumber}\n\n${orderDetails}\n\nTotal: ${totalAmount}\n\nThank you for your order! We'll prepare it and contact you shortly.\n\n- East Moon Restaurant 🥡`;
+  
+  // Send to Botpress webhook with FLAT structure
+  fetch(BOTPRESS_WEBHOOK, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      phoneNumber: customerData.phoneNumber,
+      cleanPhoneNumber: cleanPhone,
+      orderNumber: orderNumber,
+      customerName: customerData.customerName,
+      deliveryAddress: customerData.deliveryAddress,
+      orderType: customerData.orderType,
+      orderDetails: orderDetails,
+      totalAmount: totalAmount,
+      confirmationMessage: formattedMessage,
+      timestamp: new Date().toISOString()
+    })
+  })
+  .then(response => {
+    console.log('Botpress webhook response status:', response.status);
+    return response.json();
+  })
+  .then(data => {
+    console.log('Botpress webhook response:', data);
+  })
+  .catch(error => {
+    console.error('Error sending to Botpress:', error);
+  })
+  .finally(() => {
+    // Redirect to WhatsApp regardless of webhook result
+    setTimeout(() => {
+      window.location.href = `https://wa.me/${WHATSAPP_NUMBER}`;
+    }, 500);
+  });
+}
     
     // Form submission
     document.getElementById('orderForm').addEventListener('submit', async function(e) {
