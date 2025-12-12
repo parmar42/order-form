@@ -974,9 +974,7 @@
   <script>
     // ⚠️ IMPORTANT: REPLACE THESE VALUES
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyC7mlsWtETvrLDPVr99XaOvwjLlAhQI9ek1oqiOUkN_5fObtxOyJHcBrg2oOppZCZ8mg/exec';
-    const BOTPRESS_WEBHOOK = 'https://webhook.botpress.cloud/18ba5665-1857-4e37-b976-d34c8c76572b'; // e.g., https://webhook.botpress.cloud/YOUR_BOT_ID
-    const WHATSAPP_NUMBER = '12462367556'; // Your restaurant's WhatsApp number
-    
+        
     let orderItems = [];
     
     // Category toggle
@@ -1141,7 +1139,7 @@
       }
     }
     
-    function sendToBotpressAndRedirect(orderNumber, orderDetails, totalAmount, customerData) {
+    
       // Format order message
       const formattedMessage = `✅ Order Confirmed!\n\nOrder #${orderNumber}\n\n${orderDetails}\n\nTotal: ${totalAmount}\n\nThank you for your order! We'll prepare it and contact you shortly.\n\n- East Moon Restaurant 🥡`;
       
