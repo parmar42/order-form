@@ -1,0 +1,138 @@
+<style>
+  /* Sticky tab container */
+  .category-tabs {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 100;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 10px 0;
+    border-bottom: 2px solid #e0e0e0;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .category-tabs::-webkit-scrollbar {
+    height: 3px;
+  }
+  
+  .category-tab {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 0 5px;
+    background: #f8f9fa;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+  }
+  
+  .category-tab.active {
+    background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+    color: white;
+  }
+  
+  .category-content {
+    display: none;
+    padding: 20px 15px;
+  }
+  
+  .category-content.active {
+    display: block;
+  }
+  
+  /* Search bar */
+  .search-container {
+    position: sticky;
+    top: 0;
+    background: white;
+    padding: 15px;
+    z-index: 101;
+    border-bottom: 2px solid #e0e0e0;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 12px 40px 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 25px;
+    font-size: 16px;
+  }
+  
+  .search-icon {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+  }
+</style>
+
+<div class="search-container">
+  <input type="text" class="search-input" id="menuSearch" placeholder="🔍 Search menu...">
+</div>
+
+<div class="category-tabs">
+  <div class="category-tab active" data-category="appetizers">🥟 Appetizers</div>
+  <div class="category-tab" data-category="fried-rice">🍚 Fried Rice</div>
+  <div class="category-tab" data-category="chow-mein">🍜 Chow Mein</div>
+  <div class="category-tab" data-category="soups">🍲 Soups</div>
+  <div class="category-tab" data-category="seafood">🦐 Seafood</div>
+  <div class="category-tab" data-category="chicken">🍗 Chicken</div>
+  <div class="category-tab" data-category="beef">🥩 Beef</div>
+  <div class="category-tab" data-category="pork">🥓 Pork</div>
+  <div class="category-tab" data-category="vegetables">🥬 Vegetables</div>
+  <div class="category-tab" data-category="noodles">🍝 Noodles</div>
+  <div class="category-tab" data-category="rice">🍚 Rice Dishes</div>
+  <div class="category-tab" data-category="combos">🍱 Combos</div>
+  <div class="category-tab" data-category="sides">🥡 Sides</div>
+  <div class="category-tab" data-category="desserts">🍰 Desserts</div>
+  <div class="category-tab" data-category="drinks">🥤 Drinks</div>
+</div>
+
+<div id="appetizers" class="category-content active">
+  <!-- Menu items here -->
+</div>
+
+<div id="fried-rice" class="category-content">
+  <!-- Menu items here -->
+</div>
+
+<!-- More categories... -->
+
+<script>
+  // Tab switching
+  document.querySelectorAll('.category-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      // Remove active from all tabs
+      document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.category-content').forEach(c => c.classList.remove('active'));
+      
+      // Add active to clicked tab
+      this.classList.add('active');
+      const category = this.getAttribute('data-category');
+      document.getElementById(category).classList.add('active');
+      
+      // Scroll tab into view
+      this.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    });
+  });
+  
+  // Search functionality
+  document.getElementById('menuSearch').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    
+    document.querySelectorAll('.menu-item').forEach(item => {
+      const itemName = item.getAttribute('data-item').toLowerCase();
+      const itemDesc = item.querySelector('.item-description')?.textContent.toLowerCase() || '';
+      
+      if (itemName.includes(searchTerm) || itemDesc.includes(searchTerm)) {
+        item.style.display = 'flex';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  });
+</script>
