@@ -1256,11 +1256,12 @@ window.addEventListener('DOMContentLoaded', function() {
         specialInstructions: specialInstructions || 'None'
       });
       
-      const url = SCRIPT_URL + '?' + params.toString();
+      const formData = new FormData(this);
       
       try {
         const response = await fetch(url, {
-          method: 'GET',
+          method: 'POST',
+          body: formData,
           redirect: 'follow'
         });
         
