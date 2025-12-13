@@ -1268,10 +1268,21 @@ window.addEventListener('DOMContentLoaded', function() {
         const result = await response.json();
         
         document.getElementById('loading').style.display = 'none';
-        
+
         if (result.success) {
-          // Show success modal - Apps Script already handled Botpress
-          showSuccessModal(result.orderNumber);
+            // Show success modal - Apps Script already handled Botpress
+            showSuccessModal(result.orderNumber);
+        } else {
+            // Handle error response from Apps Script
+            showErrorModal(result.message);
+        }
+        
+    } catch (error) {
+        document.getElementById('loading').style.display = 'none';
+        console.error('Submission error:', error);
+        showErrorModal('A network error occurred. Please try again.');
+    }
+});
           
           // Reset form
           document.getElementById('orderForm').reset();
