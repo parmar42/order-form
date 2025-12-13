@@ -971,6 +971,9 @@
     </div>
   </div>
 
+<input type="text" id="phoneNumber" name="phoneNumberDisplay" value="">
+    <input type="hidden" id="phoneNumberApi" name="phoneNumber" value="">
+  
   <script>
     // ⚠️ IMPORTANT: REPLACE THESE VALUES
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyCGM8lBnjEMy6-kHEbzg5BywiTSAcwKrcZNQgUgWykUfvXXO34ZE7yOg1IWBGHB537kg/exec';
@@ -982,55 +985,68 @@
   // CAPTURE PHONE NUMBER FROM URL PARAMETER
   // ============================================
   const urlParams = new URLSearchParams(window.location.search);
-  const phoneFromUrl = urlParams.get('phone');
-  
-  // Pre-fill phone number when page loads
-  window.addEventListener('DOMContentLoaded', function() {
+const phoneFromUrl = urlParams.get('phone'); // This is the original, API-ready number (e.g., 12461234567)
+ 
+// Pre-fill phone number when page loads
+window.addEventListener('DOMContentLoaded', function() {
     if (phoneFromUrl) {
-      const phoneInput = document.getElementById('phoneNumber');
-      
-      // Format phone for display (remove country code prefix)
-      let displayPhone = phoneFromUrl;
-      
-      // If format is 12461234567, convert to 246-123-4567 for display
-      if (displayPhone.length === 11 && displayPhone.substring(0, 4) === '1246') {
-        const withoutCountryCode = displayPhone.substring(1); // Remove leading 1
-        displayPhone = withoutCountryCode.substring(0, 3) + '-' + 
-                      withoutCountryCode.substring(3, 6) + '-' + 
-                      withoutCountryCode.substring(6);
-      } else if (displayPhone.length === 10 && displayPhone.substring(0, 3) === '246') {
-        // Already has 246, just format it
-        displayPhone = displayPhone.substring(0, 3) + '-' + 
-                      displayPhone.substring(3, 6) + '-' + 
-                      displayPhone.substring(6);
-      }
-      
-      // Pre-fill the phone field
-      phoneInput.value = displayPhone;
-      
-      // Make it read-only and style it
-      phoneInput.readOnly = true;
-      phoneInput.style.backgroundColor = '#f0f0f0';
-      phoneInput.style.cursor = 'not-allowed';
-      
-      // Add a checkmark note below the field
-      const phoneGroup = phoneInput.closest('.form-group');
-      if (phoneGroup && !phoneGroup.querySelector('.phone-note')) {
-        const note = document.createElement('small');
-        note.className = 'phone-note';
-        note.style.color = '#28a745';
-        note.style.fontSize = '13px';
-        note.style.marginTop = '5px';
-        note.style.display = 'block';
-        note.style.fontWeight = '600';
-        note.textContent = '✓ Phone number verified from WhatsApp';
-        phoneGroup.appendChild(note);
-      }
-      
-      console.log('Phone number captured from URL:', phoneFromUrl);
-      console.log('Displayed as:', displayPhone);
+        // 1. Get both the display field AND the new hidden API field
+        const phoneInputDisplay = document.getElementById('phoneNumber');
+        const phoneInputApi = document.getElementById('phoneNumberApi'); 
+        
+        if (!phoneInputDisplay) {
+            console.error("Error: Could not find element with ID 'phoneNumber'. Check your HTML.");
+            return;
+        }
+
+        // 2. --- CRITICAL STEP: Store the original API value in the hidden field ---
+        if (phoneInputApi) {
+            phoneInputApi.value = phoneFromUrl;
+            console.log('Original API number stored in hidden field.');
+        } else {
+            console.warn("Warning: Hidden API field with ID 'phoneNumberApi' not found. Submission may fail.");
+        }
+        
+        // 3. Format phone for display (your existing logic)
+        let displayPhone = phoneFromUrl;
+        
+        // If format is 12461234567, convert to 246-123-4567 for display
+        if (displayPhone.length === 11 && displayPhone.substring(0, 4) === '1246') {
+            const withoutCountryCode = displayPhone.substring(1); // Remove leading 1
+            displayPhone = withoutCountryCode.substring(0, 3) + '-' + 
+                           withoutCountryCode.substring(3, 6) + '-' + 
+                           withoutCountryCode.substring(6);
+        } else if (displayPhone.length === 10 && displayPhone.substring(0, 3) === '246') {
+            // Already has 246, just format it
+            displayPhone = displayPhone.substring(0, 3) + '-' + 
+                           displayPhone.substring(3, 6) + '-' + 
+                           displayPhone.substring(6);
+        }
+        
+        // 4. Pre-fill the visible display field and make it read-only
+        phoneInputDisplay.value = displayPhone;
+        phoneInputDisplay.readOnly = true;
+        phoneInputDisplay.style.backgroundColor = '#f0f0f0';
+        phoneInputDisplay.style.cursor = 'not-allowed';
+        
+        // 5. Add a checkmark note below the field
+        const phoneGroup = phoneInputDisplay.closest('.form-group');
+        if (phoneGroup && !phoneGroup.querySelector('.phone-note')) {
+            const note = document.createElement('small');
+            note.className = 'phone-note';
+            note.style.color = '#28a745';
+            note.style.fontSize = '13px';
+            note.style.marginTop = '5px';
+            note.style.display = 'block';
+            note.style.fontWeight = '600';
+            note.textContent = '✓ Phone number verified from WhatsApp';
+            phoneGroup.appendChild(note);
+        }
+        
+        console.log('Phone number captured from URL:', phoneFromUrl);
+        console.log('Displayed as:', displayPhone);
     }
-  });
+});
     
     // Category toggle
     document.querySelectorAll('.category-header').forEach(header => {
