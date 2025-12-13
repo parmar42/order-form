@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Form - East Moon Test</title>
+    <style>
+        :root {
+            --red-main: #E74C3C;
+            --red-dark: #C0392B;
+            --gray-light: #f4f4f4;
+            --text-dark: #333;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--gray-light);
+            color: var(--text-dark);
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: var(--red-dark);
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="tel"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+        textarea {
+            resize: vertical;
+        }
+        #submitBtn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--red-main);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        #submitBtn:hover:not(:disabled) {
+            background-color: var(--red-dark);
+        }
+        #submitBtn:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+        .message {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            text-align: center;
+            display: none;
+        }
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top: 4px solid var(--red-main);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            display: none;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .submit-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Order Submission Test</h2>
+        <div id="message" class="message"></div>
+
+        <form id="orderForm">
+            <input type="hidden" id="notes" name="notes" value="Order placed via Vercel form.">
+            
+            <div class="form-group">
+                <label for="customerName">Your Name:</label>
+                <input type="text" id="customerName" name="customerName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phoneNumber">WhatsApp Phone Number:</label>
+                <input type="tel" id="phoneNumber" name="phoneNumber" readonly required style="background-color: #f0f0f0;">
+                <small style="color: green;">✓ Verified from chat link</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="orderType">Order Type:</label>
+                <select id="orderType" name="orderType" required>
+                    <option value="">-- Select --</option>
+                    <option value="Delivery">Delivery</option>
+                    <option value="Pickup">Pickup</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="addressGroup" style="display:none;">
+                <label for="deliveryAddress">Delivery Address:</label>
+                <textarea id="deliveryAddress" name="deliveryAddress" rows="2" placeholder="Street, area, landmarks..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="orderItems">Order Items (Test Data):</label>
+                <textarea id="orderItems" name="orderItems" rows="3" required>Sweet & Sour Chicken x1, Fried Rice x1</textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="totalAmount">Total Amount (Test Data):</label>
+                <input type="text" id="totalAmount" name="totalAmount" value="$50.00 BBD" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="specialInstructions">Special Instructions:</label>
+                <textarea id="specialInstructions" name="specialInstructions" rows="2" placeholder="e.g., No onions, extra hot sauce"></textarea>
+            </div>
+
+            <div class="submit-container">
+                <div id="spinner" class="spinner"></div>
+                <button type="submit" id="submitBtn">Submit Order</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // ============================================
+        // ⚠️ CONFIGURATION - REPLACE THESE VALUES ⚠️
+        // ============================================
+        // 1. This is the URL of your Google Apps Script Web App (must end in /exec)
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx9YE7WGP1b152rkuNStggzx5qwZXH6COAhIDYDTFYN82ekdKdNbRkpi6Kv1GYmPYdS5w/exec';
+        
+        // 2. This is the WhatsApp phone number of your business (no plus sign or spaces)
+        // This is used for the final redirect back to the chat.
+        const BUSINESS_WA_NUMBER = '12462367556'; // E.g., 12462367556
+
+        // ============================================
+        // INITIALIZATION AND PHONE NUMBER CAPTURE
+        // ============================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const phoneInput = document.getElementById('phoneNumber');
+            const addressGroup = document.getElementById('addressGroup');
+            const deliveryAddressInput = document.getElementById('deliveryAddress');
+            const orderTypeSelect = document.getElementById('orderType');
+
+            // 1. Capture Phone Number from URL
+            // Botpress link must pass the phone number like: ?phone=1246...
+            const userPhone = urlParams.get('phone');
+            if (userPhone) {
+                // Ensure the phone number is clean (digits only)
+                const cleanedPhone = userPhone.replace(/[^0-9]/g, '');
+                
+                // Pre-fill the form field with the phone number
+                phoneInput.value = cleanedPhone;
+            } else {
+                phoneInput.value = "ERROR: Missing phone URL parameter";
+            }
+            
+            // 2. Toggle Delivery Address field visibility
+            orderTypeSelect.addEventListener('change', function() {
+                const isDelivery = this.value === 'Delivery';
+                addressGroup.style.display = isDelivery ? 'block' : 'none';
+                
+                // Set 'required' attribute dynamically
+                if (isDelivery) {
+                    deliveryAddressInput.setAttribute('required', 'required');
+                } else {
+                    deliveryAddressInput.removeAttribute('required');
+                }
+            });
+            
+            // 3. Initialize Form Submission Listener
+            document.getElementById('orderForm').addEventListener('submit', handleFormSubmit);
+        });
+
+        // ============================================
+        // FORM SUBMISSION HANDLER
+        // ============================================
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const submitBtn = document.getElementById('submitBtn');
+            const spinner = document.getElementById('spinner');
+            const messageDiv = document.getElementById('message');
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = 'Submitting...';
+            spinner.style.display = 'block';
+            messageDiv.style.display = 'none';
+
+            // Gather data from form elements
+            const orderData = {
+                customerName: form.customerName.value,
+                phoneNumber: form.phoneNumber.value, 
+                deliveryAddress: form.deliveryAddress.value || 'N/A (Pickup)', // Handles pickup case
+                orderType: form.orderType.value,
+                orderItems: form.orderItems.value,
+                totalAmount: form.totalAmount.value,
+                specialInstructions: form.specialInstructions.value || 'None',
+                // Additional fields required by Apps Script:
+                notes: form.notes.value 
+            };
+            
+            if (orderData.phoneNumber.includes('ERROR')) {
+                 showError('Cannot submit: Missing phone number in URL.');
+                 return;
+            }
+
+            console.log('Data to send:', orderData);
+
+            // POST Request to Apps Script
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify(orderData),
+                    redirect: 'follow'
+                });
+                
+                if (!response.ok) {
+                    // Handle non-200 responses (e.g., 404, 500)
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    // 5. Successful submission
+                    redirectToWhatsApp(result.orderNumber);
+                } else {
+                    // 6. Apps Script logic failed (e.g., credential error, sheet error)
+                    showError('Server Error: ' + (result.message || 'Check Apps Script logs.'));
+                }
+                
+            } catch (error) {
+                // 7. Network or Fetch API error
+                console.error('Fetch Error:', error);
+                showError('Connection failed. Please try again.');
+            } finally {
+                spinner.style.display = 'none';
+            }
+        }
+        
+        // ============================================
+        // RESULT HANDLERS
+        // ============================================
+
+        function showError(message) {
+            const submitBtn = document.getElementById('submitBtn');
+            const messageDiv = document.getElementById('message');
+            
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Submit Order';
+
+            messageDiv.classList.remove('success');
+            messageDiv.classList.add('error');
+            messageDiv.textContent = 'Error: ' + message;
+            messageDiv.style.display = 'block';
+        }
+
+        function redirectToWhatsApp(orderNumber) {
+            const encodedOrderNumber = encodeURIComponent(orderNumber);
+            
+            // This message is sent to the BUSINESS number to re-open the chat, 
+            // confirming the order was placed.
+            const prefilledMessage = encodeURIComponent(
+                `Hi, I just submitted my order (Order #${orderNumber}) through the online form. Please confirm you received it!`
+            );
+            
+            // Opens the WhatsApp chat window with the business number and a pre-filled message
+            const waUrl = `https://wa.me/${BUSINESS_WA_NUMBER}?text=${prefilledMessage}`;
+            
+            window.location.href = waUrl;
+        }
+
+    </script>
+</body>
+</html>
