@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>East Moon Restaurant - Order Online</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      min-height: 100vh;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .header h1 {
+      font-size: 24px;
+      margin-bottom: 5px;
+      font-weight: 700;
+    }
+    
+    .header p {
+      font-size: 13px;
+      opacity: 0.95;
+    }
+    
+    .form-content {
+      padding: 20px;
+      padding-bottom: 180px;
+    }
+    
+    .section-title {
+      color: #333;
+      font-size: 18px;
+      font-weight: 700;
+      margin: 25px 0 15px 0;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #DC143C;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .section-title:first-child {
+      margin-top: 0;
+    }
+    
+    .form-group {
+      margin-bottom: 18px;
+    }
+    
+    label {
+      display: block;
+      color: #555;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    input[type="text"],
+    input[type="tel"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 16px;
+      font-family: inherit;
+      transition: all 0.3s;
+      background: white;
+    }
+    
+    input:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: #DC143C;
+      box-shadow: 0 0 0 4px rgba(220, 20, 60, 0.1);
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    
+    select {
+      appearance: none;
+      background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E") no-repeat right 14px center;
+      padding-right: 40px;
+      cursor: pointer;
+    }
+    
+    .required {
+      color: #DC143C;
+    }
+    
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
+    
+    .category-btn {
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 16px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .category-btn:active {
+      transform: scale(0.95);
+    }
+    
+    .category-btn.active {
+      background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+      border-color: #8B0000;
+      color: white;
+      box-shadow: 0 4px 12px rgba(220, 20, 60, 0.3);
+    }
+    
+    .category-btn .icon {
+      font-size: 32px;
+      display: block;
+      margin-bottom: 6px;
+    }
+    
+    .category-btn .name {
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.2;
+      word-wrap: break-word;
+    }
+    
+    .category-btn .count {
+      font-size: 10px;
+      opacity: 0.8;
+      margin-top: 2px;
+    }
+    
+    .menu-view {
+      display: none;
+      margin-top: 20px;
+    }
+    
+    .menu-view.active {
+      display: block;
+    }
+    
+    .menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+      color: white;
+      border-radius: 12px 12px 0 0;
+      margin-bottom: 0;
+    }
+    
+    .menu-header h3 {
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .back-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    
+    .back-btn:active {
+      background: rgba(255,255,255,0.3);
+      transform: scale(0.95);
+    }
+    
+    .menu-items-list {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      padding: 15px;
+    }
+    
+    .menu-item {
+      display: flex;
+      align-items: flex-start;
+      padding: 14px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: white;
+    }
+    
+    .menu-item:last-child {
+      margin-bottom: 0;
+    }
+    
+    .menu-item:active {
+      transform: scale(0.98);
+    }
+    
+    .menu-item.selected {
+      border-color: #DC143C;
+      background: linear-gradient(135deg, #ffe6e6 0%, #fff0f0 100%);
+      box-shadow: 0 2px 8px rgba(220, 20, 60, 0.2);
+    }
+    
+    .item-checkbox {
+      margin-right: 12px;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      flex-shrink: 0;
+      margin-top: 2px;
+      accent-color: #DC143C;
+    }
+    
+    .item-info {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .item-name {
+      font-weight: 700;
+      color: #333;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+    
+    .item-description {
+      font-size: 13px;
+      color: #666;
+      font-style: italic;
+      line-height: 1.4;
+    }
+    
+    .item-price {
+      color: #DC143C;
+      font-weight: 700;
+      font-size: 17px;
+      margin-left: 12px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    
+    .quantity-control {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      margin-left: 12px;
+      flex-shrink: 0;
+    }
+    
+    .menu-item.selected .quantity-control {
+      display: flex;
+    }
+    
+    .qty-btn {
+      width: 36px;
+      height: 36px;
+      border: 2px solid #DC143C;
+      background: white;
+      color: #DC143C;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      touch-action: manipulation;
+    }
+    
+    .qty-btn:active {
+      background: #DC143C;
+      color: white;
+      transform: scale(0.9);
+    }
+    
+    .qty-display {
+      min-width: 32px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 16px;
+      color: #333;
+    }
+    
+    .cart-summary {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 3px solid #DC143C;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+      z-index: 200;
+      display: none;
+    }
+    
+    .cart-summary.show {
+      display: block;
+    }
+    
+    .cart-toggle {
+      padding: 15px 20px;
+      background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+      color: white;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+    }
+    
+    .cart-toggle:active {
+      opacity: 0.9;
+    }
+    
+    .cart-content {
+      max-height: 50vh;
+      overflow-y: auto;
+      padding: 15px 20px;
+      background: white;
+    }
+    
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #e0e0e0;
+      font-size: 14px;
+    }
+    
+    .cart-totals {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 2px solid #e0e0e0;
+    }
+    
+    .cart-subtotal,
+    .cart-charge {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 15px;
+    }
+    
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      margin-top: 8px;
+      border-top: 3px solid #DC143C;
+      font-weight: 700;
+      font-size: 18px;
+      color: #8B0000;
+    }
+    
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 15px;
+      box-shadow: 0 4px 12px rgba(139, 0, 0, 0.3);
+      transition: all 0.2s;
+    }
+    
+    .submit-btn:active {
+      transform: scale(0.98);
+    }
+    
+    .submit-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      opacity: 0.6;
+      box-shadow: none;
+    }
+    
+    .message {
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: none;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .message.success {
+      background: #d4edda;
+      color: #155724;
+      border: 2px solid #c3e6cb;
+    }
+    
+    .message.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 2px solid #f5c6cb;
+    }
+    
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 30px;
+      background: white;
+      border-radius: 10px;
+      margin: 20px 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #DC143C;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .success-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(5px);
+    }
+    
+    .success-modal.show {
+      display: flex;
+    }
+    
+    .success-modal-content {
+      background: white;
+      border-radius: 20px;
+      padding: 40px 30px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      animation: slideUp 0.4s ease-out;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    
+    .success-checkmark {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #28a745;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 50px;
+      color: white;
+      animation: scaleIn 0.5s ease-out;
+    }
+    
+    @keyframes scaleIn {
+      0% { transform: scale(0); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    
+    .success-modal h2 {
+      color: #28a745;
+      margin-bottom: 15px;
+      font-size: 26px;
+    }
+    
+    .success-modal .order-number {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 20px 0;
+      border-left: 4px solid #DC143C;
+    }
+    
+    .success-modal .order-number span {
+      color: #666;
+      font-size: 13px;
+    }
+    
+    .success-modal .order-number strong {
+      color: #8B0000;
+      font-size: 24px;
+      display: block;
+      margin-top: 5px;
+      letter-spacing: 1px;
+    }
+    
+    .success-modal .info-box {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 20px 0;
+      color: #856404;
+      text-align: left;
+    }
+    
+    .success-modal p {
+      color: #666;
+      line-height: 1.6;
+      margin: 15px 0;
+      font-size: 15px;
+    }
+    
+    .countdown-box {
+      margin: 25px 0;
+      padding: 20px;
+      background: #e3f2fd;
+      border-radius: 10px;
+      border-left: 4px solid #2196F3;
+    }
+    
+    .countdown-box p {
+      color: #1976d2;
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    
+    .countdown-number {
+      font-size: 48px;
+      font-weight: 700;
+      color: #DC143C;
+      display: block;
+      margin: 10px 0;
+    }
+    
+    @media (max-width: 500px) {
+      .category-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .category-btn .icon {
+        font-size: 28px;
+      }
+      
+      .category-btn .name {
+        font-size: 11px;
+      }
+    }
+    
+    @media (min-width: 600px) {
+      .header h1 {
+        font-size: 32px;
+      }
+      
+      .container {
+        margin: 20px auto;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        min-height: auto;
+        overflow: hidden;
+      }
+      
+      .header {
+        border-radius: 20px 20px 0 0;
+      }
+      
+      body {
+        padding: 20px;
+        background: #e8e8e8;
+      }
+      
+      .form-content {
+        padding: 30px;
+      }
+      
+      .cart-summary {
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: 760px;
+        border-radius: 20px 20px 0 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🥡 East Moon Restaurant</h1>
+      <p>Order Online - Fast & Easy</p>
+    </div>
+    
+    <div class="form-content">
+      <div id="message" class="message"></div>
+      <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Submitting your order...</p>
+      </div>
+      
+      <form id="orderForm">
+        <div class="section-title">📋 Your Information</div>
+        
+        <div class="form-group">
+          <label for="customerName">Full Name <span class="required">*</span></label>
+          <input type="text" id="customerName" required placeholder="John Doe">
+        </div>
+        
+        <div class="form-group">
+          <label for="phoneNumber">WhatsApp Number:</label>
+          <input type="text" id="phoneNumber" readonly>
+          <input type="hidden" id="phoneNumberApi">
+        </div>
+        
+        <div class="form-group">
+          <label for="deliveryAddress">Delivery Address <span class="required">*</span></label>
+          <textarea id="deliveryAddress" required placeholder="Street, parish, landmarks"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="orderType">Order Type <span class="required">*</span></label>
+          <select id="orderType" required>
+            <option value="">-- Select --</option>
+            <option value="Delivery">🚗 Delivery (10% service charge)</option>
+            <option value="Takeout">🥡 Takeout</option>
+          </select>
+        </div>
+        
+        <div class="section-title">🍜 Choose Your Dishes</div>
+        
+        <div id="categoryGrid" class="category-grid">
+          <div class="category-btn" data-category="family-specials" data-icon="👨‍👩‍👧‍👦" data-name="Family Specials">
+            <span class="icon">👨‍👩‍👧‍👦</span>
+            <div class="name">Family Specials</div>
+            <div class="count">4 items</div>
+          </div>
+          
+          <div class="category-btn" data-category="appetizers" data-icon="🥟" data-name="Appetizers & Soups">
+            <span class="icon">🥟</span>
+            <div class="name">Appetizers</div>
+            <div class="count">17 items</div>
+          </div>
+          
+          <div class="category-btn" data-category="specialties" data-icon="⭐" data-name="Cantonese Specialties">
+            <span class="icon">⭐</span>
+            <div class="name">Specialties</div>
+            <div class="count">14 items</div>
+          </div>
+          
+          <div class="category-btn" data-category="fried-rice" data-icon="🍚" data-name="Fried Rice">
+            <span class="icon">🍚</span>
+            <div class="name">Fried Rice</div>
+            <div class="count">12 items</div>
+          </div>
+          
+          <div class="category-btn" data-category="chow-mein" data-icon="🍜" data-name="Chow Mein">
+            <span class="icon">🍜</span>
+            <div class="name">Chow Mein</div>
+            <div class="count">8 items</div>
+          </div>
+          
+          <div class="category-btn" data-category="lo-mein" data-icon="🍝" data-name="Lo Mein">
+            <span class="icon">🍝</span>
+            <div class="name">Lo Mein</div>
+            <div class="count">8 items</div>
+          </div>
+          
+          <div class="category-btn" data-category="sweet-sour" data-icon="🍯" data-name="Sweet & Sour">
+            <span class="icon">🍯</span>
+            <div class="name">Sweet & Sour</div>
+            <div class="count">6 items</div>
+          </div>
+          
+          <div class="category-btn" data-category="honey-garlic" data-icon="🍯" data-name="Honey & Garlic">
+            <span class="icon">🍯</span>
+            <div class="name">Honey Garlic</div>
+            <div class="count">4 items</div>
+          </div>
+          
+          <div class="category-btn" data-category="vegetarian" data-icon="🥬" data-name="Vegetarian">
+            <span class="icon">🥬</span>
+            <div class="name">Vegetarian</div>
+            <div class="count">7 items</div>
+          </div>
+          
+          <div class="category-btn" data-category="vegetables-meat" data-icon="🥦" data-name="Vegetables with Meat">
+            <span class="icon">🥦</span>
+            <div class="name">Veg + Meat</div>
+            <div class="count">13 items</div>
+          </div>
+          
+          <div class="category-btn" data-category="chicken-pork" data-icon="🍗" data-name="Chicken & Pork">
+            <span class="icon">🍗</span>
+            <div class="name">Chicken/Pork</div>
+            <div class="count">7 items</div>
+          </div>
+          
+          <div class="category-btn" data-category="foo-young" data-icon="🥚" data-name="Egg Foo Young">
+            <span class="icon">🥚</span>
+            <div class="name">Egg Foo Young</div>
+            <div class="count">6 items</div>
+          </div>
+          
+          <div class="category-btn" data-category="chop-suey" data-icon="🥡" data-name="Chop Suey">
+            <span class="icon">🥡</span>
+            <div class="name">Chop Suey</div>
+            <div class="count">5 items</div>
+          </div>
+          
+          <div class="category-btn" data-category="curry" data-icon="🍛" data-name="Curry Dishes">
+            <span class="icon">🍛</span>
+            <div class="name">Curry</div>
+            <div class="count">5 items</div>
+          </div>
+          
+          <div class="category-btn" data-category="szechuan" data-icon="🌶️" data-name="Szechuan (Hot & Spicy)">
+            <span class="icon">🌶️</span>
+            <div class="name">Szechuan</div>
+            <div class="count">14 items</div>
+          </div>
+        </div>
+        
+        <div id="menuView" class="menu-view">
+          <div class="menu-header">
+            <h3><span id="menuIcon"></span> <span id="menuTitle"></span></h3>
+            <button type="button" class="back-btn" id="backBtn">← Back</button>
+          </div>
+          <div class="menu-items-list" id="menuItemsList"></div>
+        </div>
+        
+        <div class="section-title" style="margin-top: 30px;">📝 Special Instructions</div>
+        <div class="form-group">
+          <textarea id="specialInstructions" placeholder="Optional - any special requests"></textarea>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="cartSummary" class="cart-summary">
+    <div class="cart-toggle" id="cartToggle">
+      <span>🛒 Cart (<span id="cartCount">0</span> items)</span>
+      <span id="cartArrow">▲</span>
+    </div>
+    <div class="cart-content" id="cartContent">
+      <div id="cartItems"></div>
+      <div class="cart-totals" id="cartTotals"></div>
+      <button type="submit" class="submit-btn" id="submitBtn" form="orderForm" disabled>Submit Order</button>
+    </div>
+  </div>
+
+  <div id="successModal" class="success-modal">
+    <div class="success-modal-content">
+      <div class="success-checkmark">✓</div>
+      <h2>Order Confirmed! 🎉</h2>
+      
+      <div class="order-number">
+        <span>Your Order Number:</span>
+        <strong id="modalOrderNumber">EM12121234</strong>
+      </div>
+      
+      <p>Thank you! Check your WhatsApp for confirmation.</p>
+      
+      <div class="info-box">
+        <strong>📱 Check Your WhatsApp!</strong><br>
+        You'll receive your order details in a few moments.
+      </div>
+      
+      <p style="font-size: 14px;"><strong>Payment:</strong> Cash on delivery/pickup</p>
+      
+      <div class="countdown-box">
+        <p>Redirecting to WhatsApp in</p>
+        <span id="redirectCountdown" class="countdown-number">5</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
+    const WHATSAPP_NUMBER = '12462367556';
+    
+    let orderItems = [];
+    let cartExpanded = true;
+    
+    // Complete menu data
+    const menuData = {
+      'family-specials': [
+        { name: 'Dinner for Two', price: 95.00, description: '2 Spring Rolls, Sweet & Sour Chicken Balls, Chicken Chop Suey, Pork Fried Rice' },
+        { name: 'Dinner for Three', price: 150.00, description: '3 Spring Rolls, Sweet & Sour Chicken Balls, Chicken Chop Suey, Beef with Diced Vegetables, 1½ Chicken Fried Rice' },
+        { name: 'Dinner for Four', price: 200.00, description: '4 Spring Rolls, Sweet & Sour Chicken Balls, Chicken Chop Suey, Honey Garlic Ribs, Breaded Shrimps, 2 Pork Fried Rice' },
+        { name: 'Dinner for Five', price: 240.00, description: '5 Spring Rolls, Sweet & Sour Chicken Canton Style, Chinese Chow Mein, Chicken Hot Garlic Sauce, Breaded Shrimps, Beef with Diced Vegetables, 2 Chicken Fried Rice' }
+      ],
+      appetizers: [
+        { name: 'Hot & Sour Soup', price: 15.00 },
+        { name: 'Wonton Soup', price: 13.00 },
+        { name: 'Egg Drop with Tomato Soup', price: 15.00 },
+        { name: 'Egg Drop with Sweet Corn Soup', price: 15.00 },
+        { name: 'Seafood Soup', price: 18.00 },
+        { name: 'Chicken Noodle Soup', price: 15.00 },
+        { name: 'Chicken Mushroom Soup', price: 15.00 },
+        { name: 'Mixed Vegetable Soup', price: 15.00 },
+        { name: 'Spring Roll (1)', price: 6.00 },
+        { name: 'French Fries', price: 13.00 },
+        { name: 'B.B.Q. Pork Slices', price: 35.00 },
+        { name: 'B.B.Q. Spare Ribs', price: 40.00 },
+        { name: 'Fried Wonton', price: 15.00 },
+        { name: 'Steam Wonton', price: 15.00 },
+        { name: 'Breaded Dry Ribs', price: 35.00 },
+        { name: 'Prawn Crackers', price: 10.00 },
+        { name: 'Breaded Jumbo Shrimp', price: 38.00 }
+      ],
+      specialties: [
+        { name: 'Great Wok Fried Shelled Shrimp', price: 43.00, description: 'Jumbo prawns with sliced onion in tangy barbecue sauce' },
+        { name: 'Crispy Beef', price: 43.00, description: 'Tender beef deep fried with spicy tangy garlic sauce' },
+        { name: 'Lemon Chicken', price: 43.00, description: "Chef's secret tangy lemon sauce with chicken breast" },
+        { name: 'Pineapple Chicken', price: 35.00 },
+        { name: 'Royal Mixed Plate', price: 43.00 },
+        { name: 'Shrimp and Cashews', price: 43.00 },
+        { name: 'Pork Spare Ribs, Peking Style', price: 43.00 },
+        { name: 'Shrimp with Lobster Sauce', price: 43.00 },
+        { name: "General Tao's Chicken", price: 43.00, description: 'Crispy chicken with spicy sweet and sour sauce' },
+        { name: 'Soo Guy', price: 43.00 },
+        { name: 'Roasted Whole Chicken in Oyster Sauce', price: 48.00 },
+        { name: "General Tao's Shrimp", price: 48.00 },
+        { name: 'Orange Chicken', price: 43.00 }
+      ],
+      'fried-rice': [
+        { name: 'Special Fried Rice', price: 34.00, description: 'Beef, Chicken, Pork, Shrimp' },
+        { name: 'Chinese Fried Rice', price: 33.00, description: 'Chicken, Pork, Shrimp' },
+        { name: 'Mixed Fried Rice', price: 32.00, description: 'Chicken, Pork' },
+        { name: 'Chicken Fried Rice', price: 25.00 },
+        { name: 'Beef Fried Rice', price: 28.00 },
+        { name: 'Pork Fried Rice', price: 25.00 },
+        { name: 'Shrimp Fried Rice', price: 28.00 },
+        { name: 'Plain Fried Rice', price: 15.00 },
+        { name: 'Vegetable Fried Rice', price: 18.00 },
+        { name: 'Egg Fried Rice', price: 20.00 },
+        { name: 'Mushroom Fried Rice', price: 28.00 },
+        { name: 'Steam Rice', price: 8.00 }
+      ],
+      'chow-mein': [
+        { name: 'Chinese Chow Mein', price: 33.00, description: 'Chicken, Pork, Shrimp' },
+        { name: 'Mixed Chow Mein', price: 32.00, description: 'Chicken, Pork' },
+        { name: 'Slice Chicken Chow Mein', price: 25.00 },
+        { name: 'Pork Chow Mein', price: 25.00 },
+        { name: 'Beef Chow Mein', price: 28.00 },
+        { name: 'Shrimp Chow Mein', price: 28.00 },
+        { name: 'Vegetable Chow Mein', price: 18.00 },
+        { name: 'Singapore Chow Mein', price: 33.00 }
+      ],
+      'lo-mein': [
+        { name: 'Chinese Low Mein', price: 35.00, description: 'Chicken, Pork, Shrimp' },
+        { name: 'Mixed Low Mein', price: 34.00, description: 'Chicken, Pork' },
+        { name: 'Chicken Low Mein', price: 27.00 },
+        { name: 'Pork Low Mein', price: 27.00 },
+        { name: 'Beef Low Mein', price: 30.00 },
+        { name: 'Shrimp Low Mein', price: 30.00 },
+        { name: 'Vegetable Low Mein', price: 20.00 },
+        { name: 'Special Low Mein', price: 36.00 }
+      ],
+      'sweet-sour': [
+        { name: 'Sweet & Sour Chicken', price: 40.00 },
+        { name: 'Sweet & Sour Chicken Balls', price: 35.00 },
+        { name: 'Sweet & Sour Breaded Shrimp', price: 38.00 },
+        { name: 'Sweet & Sour Pork Canton Style', price: 38.00 },
+        { name: 'Sweet & Sour Chicken Canton Style', price: 35.00 },
+        { name: 'Sweet & Sour Sauce', price: 4.00 }
+      ],
+      'honey-garlic': [
+        { name: 'Honey Garlic Chicken Balls', price: 26.00 },
+        { name: 'Honey Garlic Breaded Shrimp', price: 39.00 },
+        { name: 'Honey Garlic Spare Ribs', price: 41.00 },
+        { name: 'Honey Garlic Sauce', price: 5.00 }
+      ],
+      vegetarian: [
+        { name: 'Mixed Vegetables', price: 25.00 },
+        { name: 'Mushrooms & Vegetables', price: 30.00 },
+        { name: 'Tofu with Mixed Vegetables', price: 35.00 },
+        { name: 'Garlic Bak Choy', price: 25.00 },
+        { name: 'Salt & Chili Mock Duck', price: 35.00 },
+        { name: 'Mock Duck Black Bean Sauce', price: 35.00 },
+        { name: 'Sweet & Sour Tofu', price: 40.00 }
+      ],
+      'vegetables-meat': [
+        { name: 'Beef with Mushroom', price: 43.00 },
+        { name: 'Beef with Broccoli', price: 38.00 },
+        { name: 'Beef Blackbean Sauce', price: 38.00 },
+        { name: 'Beef with Cashew Nuts', price: 43.00 },
+        { name: 'Beef with Bak Choy', price: 38.00 },
+        { name: 'Beef with Mixed Vegetables', price: 38.00 },
+        { name: 'Beef with Oyster Sauce', price: 38.00 },
+        { name: 'Shrimp with Mushroom', price: 43.00 },
+        { name: 'Shrimp with Mixed Vegetables', price: 38.00 },
+        { name: 'Shrimp Blackbean Sauce', price: 38.00 },
+        { name: 'Chicken with Broccoli', price: 35.00 },
+        { name: 'Chicken with Mushroom', price: 40.00 },
+        { name: 'Chicken Blackbean Sauce', price: 35.00 }
+      ],
+      'chicken-pork': [
+        { name: 'Chicken with Cashew Nuts', price: 40.00 },
+        { name: 'Chicken with Mixed Vegetables', price: 35.00 },
+        { name: 'Chicken with Bak Choy', price: 35.00 },
+        { name: 'Pork with Mixed Vegetables', price: 35.00 },
+        { name: 'Pork with Black Bean Sauce', price: 35.00 },
+        { name: 'Pork with Broccoli', price: 35.00 },
+        { name: 'Pork with Tomato', price: 35.00 }
+      ],
+      'foo-young': [
+        { name: 'Special Foo Young', price: 38.00 },
+        { name: 'Chicken Foo Young', price: 35.00 },
+        { name: 'Shrimp Foo Young', price: 38.00 },
+        { name: 'Vegetable Foo Young', price: 25.00 },
+        { name: 'Mushroom Foo Young', price: 30.00 },
+        { name: 'Pork Foo Young', price: 35.00 }
+      ],
+      'chop-suey': [
+        { name: 'Chicken Chop Suey', price: 35.00 },
+        { name: 'Beef Chop Suey', price: 38.00 },
+        { name: 'Pork Chop Suey', price: 35.00 },
+        { name: 'Shrimp Chop Suey', price: 38.00 },
+        { name: 'Mixed Vegetable Chop Suey', price: 25.00 }
+      ],
+      curry: [
+        { name: 'Curry Chicken', price: 35.00 },
+        { name: 'Curry Beef', price: 38.00 },
+        { name: 'Curry Pork', price: 35.00 },
+        { name: 'Curry Shrimp', price: 38.00 },
+        { name: 'Curry Fish', price: 38.00 }
+      ],
+      szechuan: [
+        { name: 'Szechuan Shrimp', price: 38.00, description: 'Hot & Spicy 🌶️' },
+        { name: 'Szechuan Beef', price: 38.00, description: 'Hot & Spicy 🌶️' },
+        { name: 'Szechuan Chicken', price: 35.00, description: 'Hot & Spicy 🌶️' },
+        { name: 'Hot & Spicy Chicken with Cashew Nuts', price: 40.00, description: 'Hot & Spicy 🌶️' },
+        { name: 'Chicken with Hot Garlic Sauce', price: 35.00, description: 'Hot & Spicy 🌶️' },
+        { name: 'Shrimp with Hot Garlic Sauce', price: 38.00, description: 'Hot & Spicy 🌶️' },
+        { name: 'Chicken with Hot Chili Bean Sauce', price: 35.00, description: 'Hot & Spicy 🌶️' },
+        { name: 'Beef with Hot Chili Bean Sauce', price: 38.00, description: 'Hot & Spicy 🌶️' },
+        { name: 'Shrimp with Hot Chili Bean Sauce', price: 38.00, description: 'Hot & Spicy 🌶️' },
+        { name: 'Kung Po Shrimp', price: 38.00, description: 'Hot & Spicy 🌶️' },
+        { name: 'Kung Po Chicken', price: 35.00, description: 'Hot & Spicy 🌶️' },
+        { name: 'Kung Po Beef', price: 38.00, description: 'Hot & Spicy 🌶️' },
+        { name: 'Salted Chili Shrimp', price: 48.00, description: 'Hot & Spicy 🌶️' },
+        { name: 'Snapper with Hot Garlic Sauce', price: 35.00, description: 'Hot & Spicy 🌶️' }
+      ]
+    };
+    
+    // Phone capture
+    const urlParams = new URLSearchParams(window.location.search);
+    const phoneFromUrl = urlParams.get('phone');
+    
+    window.addEventListener('DOMContentLoaded', function() {
+      if (phoneFromUrl) {
+        const phoneInputDisplay = document.getElementById('phoneNumber');
+        const phoneInputApi = document.getElementById('phoneNumberApi');
+        
+        if (phoneInputApi) {
+          phoneInputApi.value = phoneFromUrl;
+        }
+        
+        let displayPhone = phoneFromUrl;
+        if (displayPhone.length === 11 && displayPhone.substring(0, 4) === '1246') {
+          const withoutCountryCode = displayPhone.substring(1);
+          displayPhone = withoutCountryCode.substring(0, 3) + '-' + 
+                         withoutCountryCode.substring(3, 6) + '-' + 
+                         withoutCountryCode.substring(6);
+        }
+        
+        phoneInputDisplay.value = displayPhone;
+        phoneInputDisplay.style.backgroundColor = '#f0f0f0';
+        
+        const phoneGroup = phoneInputDisplay.closest('.form-group');
+        if (phoneGroup && !phoneGroup.querySelector('.phone-note')) {
+          const note = document.createElement('small');
+          note.style.color = '#28a745';
+          note.style.fontSize = '13px';
+          note.style.marginTop = '5px';
+          note.style.display = 'block';
+          note.style.fontWeight = '600';
+          note.textContent = '✓ Verified from WhatsApp';
+          phoneGroup.appendChild(note);
+        }
+      }
+    });
+    
+    // Category buttons
+    document.querySelectorAll('.category-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const category = this.getAttribute('data-category');
+        const icon = this.getAttribute('data-icon');
+        const name = this.getAttribute('data-name');
+        showMenu(category, icon, name);
+      });
+    });
+    
+    function showMenu(category, icon, name) {
+      document.getElementById('categoryGrid').style.display = 'none';
+      document.getElementById('menuView').classList.add('active');
+      document.getElementById('menuIcon').textContent = icon;
+      document.getElementById('menuTitle').textContent = name;
+      
+      const menuList = document.getElementById('menuItemsList');
+      menuList.innerHTML = '';
+      
+      const items = menuData[category] || [];
+      
+      items.forEach(item => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'menu-item';
+        itemDiv.setAttribute('data-item', item.name);
+        itemDiv.setAttribute('data-price', item.price);
+        
+        itemDiv.innerHTML = `
+          <input type="checkbox" class="item-checkbox">
+          <div class="item-info">
+            <div class="item-name">${item.name}</div>
+            ${item.description ? `<div class="item-description">${item.description}</div>` : ''}
+          </div>
+          <span class="item-price">$${item.price.toFixed(2)}</span>
+          <div class="quantity-control">
+            <button type="button" class="qty-btn qty-minus">-</button>
+            <span class="qty-display">1</span>
+            <button type="button" class="qty-btn qty-plus">+</button>
+          </div>
+        `;
+        
+        menuList.appendChild(itemDiv);
+        
+        const checkbox = itemDiv.querySelector('.item-checkbox');
+        checkbox.addEventListener('change', function() {
+          if (this.checked) {
+            itemDiv.classList.add('selected');
+          } else {
+            itemDiv.classList.remove('selected');
+            itemDiv.querySelector('.qty-display').textContent = '1';
+          }
+          updateCart();
+        });
+        
+        itemDiv.addEventListener('click', function(e) {
+          if (e.target.classList.contains('qty-btn') || e.target === checkbox) {
+            return;
+          }
+          checkbox.checked = !checkbox.checked;
+          checkbox.dispatchEvent(new Event('change'));
+        });
+        
+        itemDiv.querySelector('.qty-plus').addEventListener('click', function(e) {
+          e.stopPropagation();
+          const display = this.previousElementSibling;
+          let qty = parseInt(display.textContent);
+          qty++;
+          display.textContent = qty;
+          updateCart();
+        });
+        
+        itemDiv.querySelector('.qty-minus').addEventListener('click', function(e) {
+          e.stopPropagation();
+          const display = this.nextElementSibling;
+          let qty = parseInt(display.textContent);
+          if (qty > 1) {
+            qty--;
+            display.textContent = qty;
+            updateCart();
+          }
+        });
+      });
+    }
+    
+    document.getElementById('backBtn').addEventListener('click', function() {
+      document.getElementById('menuView').classList.remove('active');
+      document.getElementById('categoryGrid').style.display = 'grid';
+    });
+    
+    document.getElementById('cartToggle').addEventListener('click', function() {
+      cartExpanded = !cartExpanded;
+      const content = document.getElementById('cartContent');
+      const arrow = document.getElementById('cartArrow');
+      
+      if (cartExpanded) {
+        content.style.display = 'block';
+        arrow.textContent = '▲';
+      } else {
+        content.style.display = 'none';
+        arrow.textContent = '▼';
+      }
+    });
+    
+    document.getElementById('orderType').addEventListener('change', updateCart);
+    
+    function updateCart() {
+      orderItems = [];
+      let subtotal = 0;
+      
+      document.querySelectorAll('.menu-item.selected').forEach(item => {
+        const name = item.getAttribute('data-item');
+        const price = parseFloat(item.getAttribute('data-price'));
+        const qty = parseInt(item.querySelector('.qty-display').textContent);
+        const itemSubtotal = price * qty;
+        
+        orderItems.push({
+          name: name,
+          price: price,
+          quantity: qty,
+          subtotal: itemSubtotal
+        });
+        
+        subtotal += itemSubtotal;
+      });
+      
+      const cartSummary = document.getElementById('cartSummary');
+      const cartItems = document.getElementById('cartItems');
+      const cartTotals = document.getElementById('cartTotals');
+      const submitBtn = document.getElementById('submitBtn');
+      const cartCount = document.getElementById('cartCount');
+      const orderType = document.getElementById('orderType').value;
+      
+      if (orderItems.length > 0) {
+        cartSummary.classList.add('show');
+        cartCount.textContent = orderItems.length;
+        
+        cartItems.innerHTML = orderItems.map(item => `
+          <div class="cart-item">
+            <span>${item.name} × ${item.quantity}</span>
+            <span>$${item.subtotal.toFixed(2)}</span>
+          </div>
+        `).join('');
+        
+        let total = subtotal;
+        let totalsHTML = `
+          <div class="cart-subtotal">
+            <span>Subtotal:</span>
+            <span>$${subtotal.toFixed(2)}</span>
+          </div>
+        `;
+        
+        if (orderType === 'Delivery') {
+          const charge = subtotal * 0.10;
+          total = subtotal + charge;
+          totalsHTML += `
+            <div class="cart-charge">
+              <span>Service (10%):</span>
+              <span>$${charge.toFixed(2)}</span>
+            </div>
+          `;
+        }
+        
+        totalsHTML += `
+          <div class="cart-total">
+            <span>TOTAL:</span>
+            <span>$${total.toFixed(2)} BBD</span>
+          </div>
+        `;
+        
+        cartTotals.innerHTML = totalsHTML;
+        submitBtn.disabled = false;
+      } else {
+        cartSummary.classList.remove('show');
+        cartCount.textContent = '0';
+        submitBtn.disabled = true;
+      }
+    }
+    
+    function showSuccessModal(orderNumber) {
+      document.getElementById('modalOrderNumber').textContent = orderNumber;
+      document.getElementById('successModal').classList.add('show');
+      document.body.style.overflow = 'hidden';
+      
+      let countdown = 5;
+      const countdownDisplay = document.getElementById('redirectCountdown');
+      countdownDisplay.textContent = countdown;
+      
+      const countdownInterval = setInterval(() => {
+        countdown--;
+        countdownDisplay.textContent = countdown;
+        
+        if (countdown <= 0) {
+          clearInterval(countdownInterval);
+          window.location.href = `https://wa.me/${WHATSAPP_NUMBER}`;
+        }
+      }, 1000);
+    }
+    
+    document.getElementById('orderForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      if (orderItems.length === 0) {
+        showMessage('Please select at least one item', 'error');
+        return;
+      }
+      
+      const customerName = document.getElementById('customerName').value.trim();
+      const phoneInputApi = document.getElementById('phoneNumberApi');
+      const phoneNumber = phoneInputApi ? phoneInputApi.value.trim() : document.getElementById('phoneNumber').value.trim();
+      const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
+      const orderType = document.getElementById('orderType').value;
+      const specialInstructions = document.getElementById('specialInstructions').value.trim();
+      
+      if (!orderType) {
+        showMessage('Please select order type', 'error');
+        return;
+      }
+      
+      if (!phoneNumber) {
+        showMessage('Phone number is missing', 'error');
+        return;
+      }
+      
+      let subtotal = orderItems.reduce((sum, item) => sum + item.subtotal, 0);
+      let total = orderType === 'Delivery' ? subtotal * 1.10 : subtotal;
+      
+      const orderDetails = orderItems.map(item => 
+        `${item.name} x${item.quantity} = $${item.subtotal.toFixed(2)}`
+      ).join('\n');
+      
+      const totalAmount = '$' + total.toFixed(2) + ' BBD';
+      
+      document.getElementById('loading').style.display = 'block';
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+      
+      const orderData = {
+        customerName: customerName,
+        phoneNumber: phoneNumber,
+        deliveryAddress: deliveryAddress,
+        orderType: orderType,
+        orderItems: orderDetails,
+        totalAmount: totalAmount,
+        specialInstructions: specialInstructions || 'None'
+      };
+      
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(orderData),
+          redirect: 'follow'
+        });
+        
+        const result = await response.json();
+        
+        document.getElementById('loading').style.display = 'none';
+        
+        if (result.success) {
+          showSuccessModal(result.orderNumber);
+          
+          document.getElementById('orderForm').reset();
+          document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+          document.getElementById('menuView').classList.remove('active');
+          document.getElementById('categoryGrid').style.display = 'grid';
+          orderItems = [];
+          updateCart();
+        } else {
+          showMessage('✗ ' + result.message, 'error');
+          submitBtn.textContent = 'Submit Order';
+          submitBtn.disabled = false;
+        }
+        
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('loading').style.display = 'none';
+        submitBtn.textContent = 'Submit Order';
+        submitBtn.disabled = false;
+        showMessage('✗ Error: ' + error.message, 'error');
+      }
+    });
+    
+    function showMessage(text, type) {
+      const msg = document.getElementById('message');
+      msg.textContent = text;
+      msg.className = 'message ' + type;
+      msg.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      setTimeout(() => msg.style.display = 'none', 8000);
+    }
+  </script>
+</body>
+</html>
