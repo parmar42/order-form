@@ -852,6 +852,24 @@
   
   let orderItems = [];
   let cartExpanded = true;
+
+   // ADD THESE DEBUG FUNCTIONS
+function showDebug(message) {
+  const debugBox = document.getElementById('debugBox');
+  const debugContent = document.getElementById('debugContent');
+  debugBox.style.display = 'block';
+  debugContent.innerHTML += message + '<br>';
+  console.log(message);
+}
+
+function clearDebug() {
+  document.getElementById('debugContent').innerHTML = '';
+  document.getElementById('debugBox').style.display = 'none';
+}
+
+function showAlert(title, message) {
+  alert(title + '\n\n' + message);
+}
   
   // Complete menu data - FIXED
   const menuData = {
@@ -1455,5 +1473,6 @@
 </body>
 
 </html>
+
 
 
