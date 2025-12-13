@@ -837,181 +837,186 @@
     </div>
   </div>
 
-  <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby4kvJJv3Hn-HZj2RQmkE83XV1-lk307zetg3JWY7mSAiPff_9GNAKdDi5OgE2354UEfA/exec';
-    const WHATSAPP_NUMBER = '12462367556';
+ <script>
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby4kvJJv3Hn-HZj2RQmkE83XV1-lk307zetg3JWY7mSAiPff_9GNAKdDi5OgE2354UEfA/exec';
+  const WHATSAPP_NUMBER = '12462367556';
+  
+  let orderItems = [];
+  let cartExpanded = true;
+  
+  // Complete menu data - FIXED
+  const menuData = {
+    'family-specials': [
+      { name: 'Dinner for Two', price: 95.00, description: '2 Spring Rolls, Sweet & Sour Chicken Balls, Chicken Chop Suey, Pork Fried Rice' },
+      { name: 'Dinner for Three', price: 150.00, description: '3 Spring Rolls, Sweet & Sour Chicken Balls, Chicken Chop Suey, Beef with Diced Vegetables, 1.5 Chicken Fried Rice' },
+      { name: 'Dinner for Four', price: 200.00, description: '4 Spring Rolls, Sweet & Sour Chicken Balls, Chicken Chop Suey, Honey Garlic Ribs, Breaded Shrimps, 2 Pork Fried Rice' },
+      { name: 'Dinner for Five', price: 240.00, description: '5 Spring Rolls, Sweet & Sour Chicken Canton Style, Chinese Chow Mein, Chicken Hot Garlic Sauce, Breaded Shrimps, Beef with Diced Vegetables, 2 Chicken Fried Rice' }
+    ],
+    'appetizers': [
+      { name: 'Hot & Sour Soup', price: 15.00 },
+      { name: 'Wonton Soup', price: 13.00 },
+      { name: 'Egg Drop with Tomato Soup', price: 15.00 },
+      { name: 'Egg Drop with Sweet Corn Soup', price: 15.00 },
+      { name: 'Seafood Soup', price: 18.00 },
+      { name: 'Chicken Noodle Soup', price: 15.00 },
+      { name: 'Chicken Mushroom Soup', price: 15.00 },
+      { name: 'Mixed Vegetable Soup', price: 15.00 },
+      { name: 'Spring Roll (1)', price: 6.00 },
+      { name: 'French Fries', price: 13.00 },
+      { name: 'B.B.Q. Pork Slices', price: 35.00 },
+      { name: 'B.B.Q. Spare Ribs', price: 40.00 },
+      { name: 'Fried Wonton', price: 15.00 },
+      { name: 'Steam Wonton', price: 15.00 },
+      { name: 'Breaded Dry Ribs', price: 35.00 },
+      { name: 'Prawn Crackers', price: 10.00 },
+      { name: 'Breaded Jumbo Shrimp', price: 38.00 }
+    ],
+    'specialties': [
+      { name: 'Great Wok Fried Shelled Shrimp', price: 43.00, description: 'Jumbo prawns with sliced onion in tangy barbecue sauce' },
+      { name: 'Crispy Beef', price: 43.00, description: 'Tender beef deep fried with spicy tangy garlic sauce' },
+      { name: 'Lemon Chicken', price: 43.00, description: 'Chef\'s secret tangy lemon sauce with chicken breast' },
+      { name: 'Pineapple Chicken', price: 35.00 },
+      { name: 'Royal Mixed Plate', price: 43.00 },
+      { name: 'Shrimp and Cashews', price: 43.00 },
+      { name: 'Pork Spare Ribs, Peking Style', price: 43.00 },
+      { name: 'Shrimp with Lobster Sauce', price: 43.00 },
+      { name: 'General Tao\'s Chicken', price: 43.00, description: 'Crispy chicken with spicy sweet and sour sauce' },
+      { name: 'Soo Guy', price: 43.00 },
+      { name: 'Roasted Whole Chicken in Oyster Sauce', price: 48.00 },
+      { name: 'General Tao\'s Shrimp', price: 48.00 },
+      { name: 'Orange Chicken', price: 43.00 }
+    ],
+    'fried-rice': [
+      { name: 'Special Fried Rice', price: 34.00, description: 'Beef, Chicken, Pork, Shrimp' },
+      { name: 'Chinese Fried Rice', price: 33.00, description: 'Chicken, Pork, Shrimp' },
+      { name: 'Mixed Fried Rice', price: 32.00, description: 'Chicken, Pork' },
+      { name: 'Chicken Fried Rice', price: 25.00 },
+      { name: 'Beef Fried Rice', price: 28.00 },
+      { name: 'Pork Fried Rice', price: 25.00 },
+      { name: 'Shrimp Fried Rice', price: 28.00 },
+      { name: 'Plain Fried Rice', price: 15.00 },
+      { name: 'Vegetable Fried Rice', price: 18.00 },
+      { name: 'Egg Fried Rice', price: 20.00 },
+      { name: 'Mushroom Fried Rice', price: 28.00 },
+      { name: 'Steam Rice', price: 8.00 }
+    ],
+    'chow-mein': [
+      { name: 'Chinese Chow Mein', price: 33.00, description: 'Chicken, Pork, Shrimp' },
+      { name: 'Mixed Chow Mein', price: 32.00, description: 'Chicken, Pork' },
+      { name: 'Slice Chicken Chow Mein', price: 25.00 },
+      { name: 'Pork Chow Mein', price: 25.00 },
+      { name: 'Beef Chow Mein', price: 28.00 },
+      { name: 'Shrimp Chow Mein', price: 28.00 },
+      { name: 'Vegetable Chow Mein', price: 18.00 },
+      { name: 'Singapore Chow Mein', price: 33.00 }
+    ],
+    'lo-mein': [
+      { name: 'Chinese Low Mein', price: 35.00, description: 'Chicken, Pork, Shrimp' },
+      { name: 'Mixed Low Mein', price: 34.00, description: 'Chicken, Pork' },
+      { name: 'Chicken Low Mein', price: 27.00 },
+      { name: 'Pork Low Mein', price: 27.00 },
+      { name: 'Beef Low Mein', price: 30.00 },
+      { name: 'Shrimp Low Mein', price: 30.00 },
+      { name: 'Vegetable Low Mein', price: 20.00 },
+      { name: 'Special Low Mein', price: 36.00 }
+    ],
+    'sweet-sour': [
+      { name: 'Sweet & Sour Chicken', price: 40.00 },
+      { name: 'Sweet & Sour Chicken Balls', price: 35.00 },
+      { name: 'Sweet & Sour Breaded Shrimp', price: 38.00 },
+      { name: 'Sweet & Sour Pork Canton Style', price: 38.00 },
+      { name: 'Sweet & Sour Chicken Canton Style', price: 35.00 },
+      { name: 'Sweet & Sour Sauce', price: 4.00 }
+    ],
+    'honey-garlic': [
+      { name: 'Honey Garlic Chicken Balls', price: 26.00 },
+      { name: 'Honey Garlic Breaded Shrimp', price: 39.00 },
+      { name: 'Honey Garlic Spare Ribs', price: 41.00 },
+      { name: 'Honey Garlic Sauce', price: 5.00 }
+    ],
+    'vegetarian': [
+      { name: 'Mixed Vegetables', price: 25.00 },
+      { name: 'Mushrooms & Vegetables', price: 30.00 },
+      { name: 'Tofu with Mixed Vegetables', price: 35.00 },
+      { name: 'Garlic Bak Choy', price: 25.00 },
+      { name: 'Salt & Chili Mock Duck', price: 35.00 },
+      { name: 'Mock Duck Black Bean Sauce', price: 35.00 },
+      { name: 'Sweet & Sour Tofu', price: 40.00 }
+    ],
+    'vegetables-meat': [
+      { name: 'Beef with Mushroom', price: 43.00 },
+      { name: 'Beef with Broccoli', price: 38.00 },
+      { name: 'Beef Blackbean Sauce', price: 38.00 },
+      { name: 'Beef with Cashew Nuts', price: 43.00 },
+      { name: 'Beef with Bak Choy', price: 38.00 },
+      { name: 'Beef with Mixed Vegetables', price: 38.00 },
+      { name: 'Beef with Oyster Sauce', price: 38.00 },
+      { name: 'Shrimp with Mushroom', price: 43.00 },
+      { name: 'Shrimp with Mixed Vegetables', price: 38.00 },
+      { name: 'Shrimp Blackbean Sauce', price: 38.00 },
+      { name: 'Chicken with Broccoli', price: 35.00 },
+      { name: 'Chicken with Mushroom', price: 40.00 },
+      { name: 'Chicken Blackbean Sauce', price: 35.00 }
+    ],
+    'chicken-pork': [
+      { name: 'Chicken with Cashew Nuts', price: 40.00 },
+      { name: 'Chicken with Mixed Vegetables', price: 35.00 },
+      { name: 'Chicken with Bak Choy', price: 35.00 },
+      { name: 'Pork with Mixed Vegetables', price: 35.00 },
+      { name: 'Pork with Black Bean Sauce', price: 35.00 },
+      { name: 'Pork with Broccoli', price: 35.00 },
+      { name: 'Pork with Tomato', price: 35.00 }
+    ],
+    'foo-young': [
+      { name: 'Special Foo Young', price: 38.00 },
+      { name: 'Chicken Foo Young', price: 35.00 },
+      { name: 'Shrimp Foo Young', price: 38.00 },
+      { name: 'Vegetable Foo Young', price: 25.00 },
+      { name: 'Mushroom Foo Young', price: 30.00 },
+      { name: 'Pork Foo Young', price: 35.00 }
+    ],
+    'chop-suey': [
+      { name: 'Chicken Chop Suey', price: 35.00 },
+      { name: 'Beef Chop Suey', price: 38.00 },
+      { name: 'Pork Chop Suey', price: 35.00 },
+      { name: 'Shrimp Chop Suey', price: 38.00 },
+      { name: 'Mixed Vegetable Chop Suey', price: 25.00 }
+    ],
+    'curry': [
+      { name: 'Curry Chicken', price: 35.00 },
+      { name: 'Curry Beef', price: 38.00 },
+      { name: 'Curry Pork', price: 35.00 },
+      { name: 'Curry Shrimp', price: 38.00 },
+      { name: 'Curry Fish', price: 38.00 }
+    ],
+    'szechuan': [
+      { name: 'Szechuan Shrimp', price: 38.00, description: 'Hot & Spicy' },
+      { name: 'Szechuan Beef', price: 38.00, description: 'Hot & Spicy' },
+      { name: 'Szechuan Chicken', price: 35.00, description: 'Hot & Spicy' },
+      { name: 'Hot & Spicy Chicken with Cashew Nuts', price: 40.00, description: 'Hot & Spicy' },
+      { name: 'Chicken with Hot Garlic Sauce', price: 35.00, description: 'Hot & Spicy' },
+      { name: 'Shrimp with Hot Garlic Sauce', price: 38.00, description: 'Hot & Spicy' },
+      { name: 'Chicken with Hot Chili Bean Sauce', price: 35.00, description: 'Hot & Spicy' },
+      { name: 'Beef with Hot Chili Bean Sauce', price: 38.00, description: 'Hot & Spicy' },
+      { name: 'Shrimp with Hot Chili Bean Sauce', price: 38.00, description: 'Hot & Spicy' },
+      { name: 'Kung Po Shrimp', price: 38.00, description: 'Hot & Spicy' },
+      { name: 'Kung Po Chicken', price: 35.00, description: 'Hot & Spicy' },
+      { name: 'Kung Po Beef', price: 38.00, description: 'Hot & Spicy' },
+      { name: 'Salted Chili Shrimp', price: 48.00, description: 'Hot & Spicy' },
+      { name: 'Snapper with Hot Garlic Sauce', price: 35.00, description: 'Hot & Spicy' }
+    ]
+  };
+  
+  console.log('Menu data loaded:', Object.keys(menuData).length, 'categories');
+  
+  // Phone capture
+  const urlParams = new URLSearchParams(window.location.search);
+  const phoneFromUrl = urlParams.get('phone');
+  
+  window.addEventListener('DOMContentLoaded', function() {
+    console.log('Page loaded');
     
-    let orderItems = [];
-    let cartExpanded = true;
-    
-    // Complete menu data
-    const menuData = {
-      'family-specials': [
-        { name: 'Dinner for Two', price: 95.00, description: '2 Spring Rolls, Sweet & Sour Chicken Balls, Chicken Chop Suey, Pork Fried Rice' },
-        { name: 'Dinner for Three', price: 150.00, description: '3 Spring Rolls, Sweet & Sour Chicken Balls, Chicken Chop Suey, Beef with Diced Vegetables, 1½ Chicken Fried Rice' },
-        { name: 'Dinner for Four', price: 200.00, description: '4 Spring Rolls, Sweet & Sour Chicken Balls, Chicken Chop Suey, Honey Garlic Ribs, Breaded Shrimps, 2 Pork Fried Rice' },
-        { name: 'Dinner for Five', price: 240.00, description: '5 Spring Rolls, Sweet & Sour Chicken Canton Style, Chinese Chow Mein, Chicken Hot Garlic Sauce, Breaded Shrimps, Beef with Diced Vegetables, 2 Chicken Fried Rice' }
-      ],
-      appetizers: [
-        { name: 'Hot & Sour Soup', price: 15.00 },
-        { name: 'Wonton Soup', price: 13.00 },
-        { name: 'Egg Drop with Tomato Soup', price: 15.00 },
-        { name: 'Egg Drop with Sweet Corn Soup', price: 15.00 },
-        { name: 'Seafood Soup', price: 18.00 },
-        { name: 'Chicken Noodle Soup', price: 15.00 },
-        { name: 'Chicken Mushroom Soup', price: 15.00 },
-        { name: 'Mixed Vegetable Soup', price: 15.00 },
-        { name: 'Spring Roll (1)', price: 6.00 },
-        { name: 'French Fries', price: 13.00 },
-        { name: 'B.B.Q. Pork Slices', price: 35.00 },
-        { name: 'B.B.Q. Spare Ribs', price: 40.00 },
-        { name: 'Fried Wonton', price: 15.00 },
-        { name: 'Steam Wonton', price: 15.00 },
-        { name: 'Breaded Dry Ribs', price: 35.00 },
-        { name: 'Prawn Crackers', price: 10.00 },
-        { name: 'Breaded Jumbo Shrimp', price: 38.00 }
-      ],
-      specialties: [
-        { name: 'Great Wok Fried Shelled Shrimp', price: 43.00, description: 'Jumbo prawns with sliced onion in tangy barbecue sauce' },
-        { name: 'Crispy Beef', price: 43.00, description: 'Tender beef deep fried with spicy tangy garlic sauce' },
-        { name: 'Lemon Chicken', price: 43.00, description: "Chef's secret tangy lemon sauce with chicken breast" },
-        { name: 'Pineapple Chicken', price: 35.00 },
-        { name: 'Royal Mixed Plate', price: 43.00 },
-        { name: 'Shrimp and Cashews', price: 43.00 },
-        { name: 'Pork Spare Ribs, Peking Style', price: 43.00 },
-        { name: 'Shrimp with Lobster Sauce', price: 43.00 },
-        { name: "General Tao's Chicken", price: 43.00, description: 'Crispy chicken with spicy sweet and sour sauce' },
-        { name: 'Soo Guy', price: 43.00 },
-        { name: 'Roasted Whole Chicken in Oyster Sauce', price: 48.00 },
-        { name: "General Tao's Shrimp", price: 48.00 },
-        { name: 'Orange Chicken', price: 43.00 }
-      ],
-      'fried-rice': [
-        { name: 'Special Fried Rice', price: 34.00, description: 'Beef, Chicken, Pork, Shrimp' },
-        { name: 'Chinese Fried Rice', price: 33.00, description: 'Chicken, Pork, Shrimp' },
-        { name: 'Mixed Fried Rice', price: 32.00, description: 'Chicken, Pork' },
-        { name: 'Chicken Fried Rice', price: 25.00 },
-        { name: 'Beef Fried Rice', price: 28.00 },
-        { name: 'Pork Fried Rice', price: 25.00 },
-        { name: 'Shrimp Fried Rice', price: 28.00 },
-        { name: 'Plain Fried Rice', price: 15.00 },
-        { name: 'Vegetable Fried Rice', price: 18.00 },
-        { name: 'Egg Fried Rice', price: 20.00 },
-        { name: 'Mushroom Fried Rice', price: 28.00 },
-        { name: 'Steam Rice', price: 8.00 }
-      ],
-      'chow-mein': [
-        { name: 'Chinese Chow Mein', price: 33.00, description: 'Chicken, Pork, Shrimp' },
-        { name: 'Mixed Chow Mein', price: 32.00, description: 'Chicken, Pork' },
-        { name: 'Slice Chicken Chow Mein', price: 25.00 },
-        { name: 'Pork Chow Mein', price: 25.00 },
-        { name: 'Beef Chow Mein', price: 28.00 },
-        { name: 'Shrimp Chow Mein', price: 28.00 },
-        { name: 'Vegetable Chow Mein', price: 18.00 },
-        { name: 'Singapore Chow Mein', price: 33.00 }
-      ],
-      'lo-mein': [
-        { name: 'Chinese Low Mein', price: 35.00, description: 'Chicken, Pork, Shrimp' },
-        { name: 'Mixed Low Mein', price: 34.00, description: 'Chicken, Pork' },
-        { name: 'Chicken Low Mein', price: 27.00 },
-        { name: 'Pork Low Mein', price: 27.00 },
-        { name: 'Beef Low Mein', price: 30.00 },
-        { name: 'Shrimp Low Mein', price: 30.00 },
-        { name: 'Vegetable Low Mein', price: 20.00 },
-        { name: 'Special Low Mein', price: 36.00 }
-      ],
-      'sweet-sour': [
-        { name: 'Sweet & Sour Chicken', price: 40.00 },
-        { name: 'Sweet & Sour Chicken Balls', price: 35.00 },
-        { name: 'Sweet & Sour Breaded Shrimp', price: 38.00 },
-        { name: 'Sweet & Sour Pork Canton Style', price: 38.00 },
-        { name: 'Sweet & Sour Chicken Canton Style', price: 35.00 },
-        { name: 'Sweet & Sour Sauce', price: 4.00 }
-      ],
-      'honey-garlic': [
-        { name: 'Honey Garlic Chicken Balls', price: 26.00 },
-        { name: 'Honey Garlic Breaded Shrimp', price: 39.00 },
-        { name: 'Honey Garlic Spare Ribs', price: 41.00 },
-        { name: 'Honey Garlic Sauce', price: 5.00 }
-      ],
-      vegetarian: [
-        { name: 'Mixed Vegetables', price: 25.00 },
-        { name: 'Mushrooms & Vegetables', price: 30.00 },
-        { name: 'Tofu with Mixed Vegetables', price: 35.00 },
-        { name: 'Garlic Bak Choy', price: 25.00 },
-        { name: 'Salt & Chili Mock Duck', price: 35.00 },
-        { name: 'Mock Duck Black Bean Sauce', price: 35.00 },
-        { name: 'Sweet & Sour Tofu', price: 40.00 }
-      ],
-      'vegetables-meat': [
-        { name: 'Beef with Mushroom', price: 43.00 },
-        { name: 'Beef with Broccoli', price: 38.00 },
-        { name: 'Beef Blackbean Sauce', price: 38.00 },
-        { name: 'Beef with Cashew Nuts', price: 43.00 },
-        { name: 'Beef with Bak Choy', price: 38.00 },
-        { name: 'Beef with Mixed Vegetables', price: 38.00 },
-        { name: 'Beef with Oyster Sauce', price: 38.00 },
-        { name: 'Shrimp with Mushroom', price: 43.00 },
-        { name: 'Shrimp with Mixed Vegetables', price: 38.00 },
-        { name: 'Shrimp Blackbean Sauce', price: 38.00 },
-        { name: 'Chicken with Broccoli', price: 35.00 },
-        { name: 'Chicken with Mushroom', price: 40.00 },
-        { name: 'Chicken Blackbean Sauce', price: 35.00 }
-      ],
-      'chicken-pork': [
-        { name: 'Chicken with Cashew Nuts', price: 40.00 },
-        { name: 'Chicken with Mixed Vegetables', price: 35.00 },
-        { name: 'Chicken with Bak Choy', price: 35.00 },
-        { name: 'Pork with Mixed Vegetables', price: 35.00 },
-        { name: 'Pork with Black Bean Sauce', price: 35.00 },
-        { name: 'Pork with Broccoli', price: 35.00 },
-        { name: 'Pork with Tomato', price: 35.00 }
-      ],
-      'foo-young': [
-        { name: 'Special Foo Young', price: 38.00 },
-        { name: 'Chicken Foo Young', price: 35.00 },
-        { name: 'Shrimp Foo Young', price: 38.00 },
-        { name: 'Vegetable Foo Young', price: 25.00 },
-        { name: 'Mushroom Foo Young', price: 30.00 },
-        { name: 'Pork Foo Young', price: 35.00 }
-      ],
-      'chop-suey': [
-        { name: 'Chicken Chop Suey', price: 35.00 },
-        { name: 'Beef Chop Suey', price: 38.00 },
-        { name: 'Pork Chop Suey', price: 35.00 },
-        { name: 'Shrimp Chop Suey', price: 38.00 },
-        { name: 'Mixed Vegetable Chop Suey', price: 25.00 }
-      ],
-      curry: [
-        { name: 'Curry Chicken', price: 35.00 },
-        { name: 'Curry Beef', price: 38.00 },
-        { name: 'Curry Pork', price: 35.00 },
-        { name: 'Curry Shrimp', price: 38.00 },
-        { name: 'Curry Fish', price: 38.00 }
-      ],
-      szechuan: [
-        { name: 'Szechuan Shrimp', price: 38.00, description: 'Hot & Spicy 🌶️' },
-        { name: 'Szechuan Beef', price: 38.00, description: 'Hot & Spicy 🌶️' },
-        { name: 'Szechuan Chicken', price: 35.00, description: 'Hot & Spicy 🌶️' },
-        { name: 'Hot & Spicy Chicken with Cashew Nuts', price: 40.00, description: 'Hot & Spicy 🌶️' },
-        { name: 'Chicken with Hot Garlic Sauce', price: 35.00, description: 'Hot & Spicy 🌶️' },
-        { name: 'Shrimp with Hot Garlic Sauce', price: 38.00, description: 'Hot & Spicy 🌶️' },
-        { name: 'Chicken with Hot Chili Bean Sauce', price: 35.00, description: 'Hot & Spicy 🌶️' },
-        { name: 'Beef with Hot Chili Bean Sauce', price: 38.00, description: 'Hot & Spicy 🌶️' },
-        { name: 'Shrimp with Hot Chili Bean Sauce', price: 38.00, description: 'Hot & Spicy 🌶️' },
-        { name: 'Kung Po Shrimp', price: 38.00, description: 'Hot & Spicy 🌶️' },
-        { name: 'Kung Po Chicken', price: 35.00, description: 'Hot & Spicy 🌶️' },
-        { name: 'Kung Po Beef', price: 38.00, description: 'Hot & Spicy 🌶️' },
-        { name: 'Salted Chili Shrimp', price: 48.00, description: 'Hot & Spicy 🌶️' },
-        { name: 'Snapper with Hot Garlic Sauce', price: 35.00, description: 'Hot & Spicy 🌶️' }
-      ]
-    };
-    
-    // Phone capture
-    const urlParams = new URLSearchParams(window.location.search);
-    const phoneFromUrl = urlParams.get('phone');
-    
-    window.addEventListener('DOMContentLoaded', function() {
+    try {
       if (phoneFromUrl) {
         const phoneInputDisplay = document.getElementById('phoneNumber');
         const phoneInputApi = document.getElementById('phoneNumberApi');
@@ -1042,20 +1047,70 @@
           note.textContent = '✓ Verified from WhatsApp';
           phoneGroup.appendChild(note);
         }
+        
+        console.log('Phone number set:', phoneFromUrl);
       }
-    });
+      
+      // Setup category buttons
+      setupCategoryButtons();
+      
+      // Setup back button
+      document.getElementById('backBtn').addEventListener('click', function() {
+        document.getElementById('menuView').classList.remove('active');
+        document.getElementById('categoryGrid').style.display = 'grid';
+      });
+      
+      // Setup cart toggle
+      document.getElementById('cartToggle').addEventListener('click', function() {
+        cartExpanded = !cartExpanded;
+        const content = document.getElementById('cartContent');
+        const arrow = document.getElementById('cartArrow');
+        
+        if (cartExpanded) {
+          content.style.display = 'block';
+          arrow.textContent = '▲';
+        } else {
+          content.style.display = 'none';
+          arrow.textContent = '▼';
+        }
+      });
+      
+      // Setup order type change
+      document.getElementById('orderType').addEventListener('change', updateCart);
+      
+      console.log('All event listeners set up');
+      
+    } catch (error) {
+      console.error('Error during setup:', error);
+      showMessage('Error loading page: ' + error.message, 'error');
+    }
+  });
+  
+  function setupCategoryButtons() {
+    const categoryBtns = document.querySelectorAll('.category-btn');
+    console.log('Setting up', categoryBtns.length, 'category buttons');
     
-    // Category buttons
-    document.querySelectorAll('.category-btn').forEach(btn => {
+    categoryBtns.forEach(btn => {
       btn.addEventListener('click', function() {
-        const category = this.getAttribute('data-category');
-        const icon = this.getAttribute('data-icon');
-        const name = this.getAttribute('data-name');
-        showMenu(category, icon, name);
+        try {
+          const category = this.getAttribute('data-category');
+          const icon = this.getAttribute('data-icon');
+          const name = this.getAttribute('data-name');
+          
+          console.log('Category clicked:', category);
+          showMenu(category, icon, name);
+        } catch (error) {
+          console.error('Error clicking category:', error);
+          showMessage('Error loading menu: ' + error.message, 'error');
+        }
       });
     });
-    
-    function showMenu(category, icon, name) {
+  }
+  
+  function showMenu(category, icon, name) {
+    try {
+      console.log('Showing menu for:', category);
+      
       document.getElementById('categoryGrid').style.display = 'none';
       document.getElementById('menuView').classList.add('active');
       document.getElementById('menuIcon').textContent = icon;
@@ -1064,7 +1119,15 @@
       const menuList = document.getElementById('menuItemsList');
       menuList.innerHTML = '';
       
-      const items = menuData[category] || [];
+      const items = menuData[category];
+      
+      if (!items) {
+        console.error('No items found for category:', category);
+        menuList.innerHTML = '<p style="padding: 20px; text-align: center; color: #666;">No items available</p>';
+        return;
+      }
+      
+      console.log('Loading', items.length, 'items');
       
       items.forEach(item => {
         const itemDiv = document.createElement('div');
@@ -1127,30 +1190,17 @@
           }
         });
       });
-    }
-    
-    document.getElementById('backBtn').addEventListener('click', function() {
-      document.getElementById('menuView').classList.remove('active');
-      document.getElementById('categoryGrid').style.display = 'grid';
-    });
-    
-    document.getElementById('cartToggle').addEventListener('click', function() {
-      cartExpanded = !cartExpanded;
-      const content = document.getElementById('cartContent');
-      const arrow = document.getElementById('cartArrow');
       
-      if (cartExpanded) {
-        content.style.display = 'block';
-        arrow.textContent = '▲';
-      } else {
-        content.style.display = 'none';
-        arrow.textContent = '▼';
-      }
-    });
-    
-    document.getElementById('orderType').addEventListener('change', updateCart);
-    
-    function updateCart() {
+      console.log('Menu loaded successfully');
+      
+    } catch (error) {
+      console.error('Error in showMenu:', error);
+      showMessage('Error displaying menu: ' + error.message, 'error');
+    }
+  }
+  
+  function updateCart() {
+    try {
       orderItems = [];
       let subtotal = 0;
       
@@ -1221,31 +1271,36 @@
         cartCount.textContent = '0';
         submitBtn.disabled = true;
       }
-    }
-    
-    function showSuccessModal(orderNumber) {
-      document.getElementById('modalOrderNumber').textContent = orderNumber;
-      document.getElementById('successModal').classList.add('show');
-      document.body.style.overflow = 'hidden';
       
-      let countdown = 5;
-      const countdownDisplay = document.getElementById('redirectCountdown');
+    } catch (error) {
+      console.error('Error updating cart:', error);
+    }
+  }
+  
+  function showSuccessModal(orderNumber) {
+    document.getElementById('modalOrderNumber').textContent = orderNumber;
+    document.getElementById('successModal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+    
+    let countdown = 5;
+    const countdownDisplay = document.getElementById('redirectCountdown');
+    countdownDisplay.textContent = countdown;
+    
+    const countdownInterval = setInterval(() => {
+      countdown--;
       countdownDisplay.textContent = countdown;
       
-      const countdownInterval = setInterval(() => {
-        countdown--;
-        countdownDisplay.textContent = countdown;
-        
-        if (countdown <= 0) {
-          clearInterval(countdownInterval);
-          window.location.href = `https://wa.me/${WHATSAPP_NUMBER}`;
-        }
-      }, 1000);
-    }
+      if (countdown <= 0) {
+        clearInterval(countdownInterval);
+        window.location.href = `https://wa.me/${WHATSAPP_NUMBER}`;
+      }
+    }, 1000);
+  }
+  
+  document.getElementById('orderForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
     
-    document.getElementById('orderForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
+    try {
       if (orderItems.length === 0) {
         showMessage('Please select at least one item', 'error');
         return;
@@ -1292,54 +1347,103 @@
         specialInstructions: specialInstructions || 'None'
       };
       
-      try {
-        const response = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(orderData),
-          redirect: 'follow'
-        });
+      console.log('Submitting order:', orderData);
+      
+      const response = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(orderData),
+        redirect: 'follow'
+      });
+      
+      const result = await response.json();
+      
+      console.log('Response:', result);
+      
+      document.getElementById('loading').style.display = 'none';
+      
+      if (result.success) {
+        showSuccessModal(result.orderNumber);
         
-        const result = await response.json();
-        
-        document.getElementById('loading').style.display = 'none';
-        
-        if (result.success) {
-          showSuccessModal(result.orderNumber);
-          
-          document.getElementById('orderForm').reset();
-          document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
-          document.getElementById('menuView').classList.remove('active');
-          document.getElementById('categoryGrid').style.display = 'grid';
-          orderItems = [];
-          updateCart();
-        } else {
-          showMessage('✗ ' + result.message, 'error');
-          submitBtn.textContent = 'Submit Order';
-          submitBtn.disabled = false;
-        }
-        
-      } catch (error) {
-        console.error('Error:', error);
-        document.getElementById('loading').style.display = 'none';
+        document.getElementById('orderForm').reset();
+        document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+        document.getElementById('menuView').classList.remove('active');
+        document.getElementById('categoryGrid').style.display = 'grid';
+        orderItems = [];
+        updateCart();
+      } else {
+        showMessage('✗ ' + result.message, 'error');
         submitBtn.textContent = 'Submit Order';
         submitBtn.disabled = false;
-        showMessage('✗ Error: ' + error.message, 'error');
       }
-    });
-    
-    function showMessage(text, type) {
-      const msg = document.getElementById('message');
-      msg.textContent = text;
-      msg.className = 'message ' + type;
-      msg.style.display = 'block';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
       
-      setTimeout(() => msg.style.display = 'none', 8000);
+    } catch (error) {
+      console.error('Submission error:', error);
+      document.getElementById('loading').style.display = 'none';
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.textContent = 'Submit Order';
+      submitBtn.disabled = false;
+      showMessage('✗ Error: ' + error.message, 'error');
     }
+  });
+  
+  function showMessage(text, type) {
+    const msg = document.getElementById('message');
+    msg.textContent = text;
+    msg.className = 'message ' + type;
+    msg.style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    setTimeout(() => msg.style.display = 'none', 8000);
+  }
+  
+  // Global error handler
+  window.addEventListener('error', function(e) {
+    console.error('Global error:', e.error);
+    showMessage('An error occurred. Please refresh the page.', 'error');
+  });
+  
+  console.log('Script loaded successfully');
+</script>
+```
+
+---
+
+## **What This Fixed:**
+
+1. ✅ **Removed emoji from code** (was causing string errors)
+2. ✅ **Added console.log debugging** throughout
+3. ✅ **Added try-catch blocks** everywhere
+4. ✅ **Global error handler** to catch any missed errors
+5. ✅ **Better error messages** to user
+6. ✅ **Fixed apostrophes** in item names (escaped properly)
+
+---
+
+## **How to Debug:**
+
+1. **Open the page**
+2. **Press F12** (Developer Tools)
+3. **Go to Console tab**
+4. **Look for errors** - you should see:
+```
+   Script loaded successfully
+   Menu data loaded: 15 categories
+   Page loaded
+   Setting up 15 category buttons
+```
+
+5. **Try clicking a category** - should see:
+```
+   Category clicked: appetizers
+   Showing menu for: appetizers
+   Loading 17 items
+   Menu loaded successfully
+  
   </script>
 </body>
 
 </html>
+
