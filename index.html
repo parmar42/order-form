@@ -979,7 +979,7 @@
     let orderItems = [];
         
   // ============================================
-  // CAPTURE PHONE FROM URL PARAMETER
+  // CAPTURE PHONE NUMBER FROM URL PARAMETER
   // ============================================
   const urlParams = new URLSearchParams(window.location.search);
   const phoneFromUrl = urlParams.get('phone');
@@ -989,18 +989,23 @@
     if (phoneFromUrl) {
       const phoneInput = document.getElementById('phoneNumber');
       
-      // Format phone for display (remove country code prefix for cleaner look)
+      // Format phone for display (remove country code prefix)
       let displayPhone = phoneFromUrl;
       
-      // If it's 12461234567, format to 246-123-4567 for display
+      // If format is 12461234567, convert to 246-123-4567 for display
       if (displayPhone.length === 11 && displayPhone.substring(0, 4) === '1246') {
         const withoutCountryCode = displayPhone.substring(1); // Remove leading 1
         displayPhone = withoutCountryCode.substring(0, 3) + '-' + 
                       withoutCountryCode.substring(3, 6) + '-' + 
                       withoutCountryCode.substring(6);
+      } else if (displayPhone.length === 10 && displayPhone.substring(0, 3) === '246') {
+        // Already has 246, just format it
+        displayPhone = displayPhone.substring(0, 3) + '-' + 
+                      displayPhone.substring(3, 6) + '-' + 
+                      displayPhone.substring(6);
       }
       
-      // Pre-fill the field
+      // Pre-fill the phone field
       phoneInput.value = displayPhone;
       
       // Make it read-only and style it
@@ -1008,20 +1013,22 @@
       phoneInput.style.backgroundColor = '#f0f0f0';
       phoneInput.style.cursor = 'not-allowed';
       
-      // Add a note below the field
+      // Add a checkmark note below the field
       const phoneGroup = phoneInput.closest('.form-group');
       if (phoneGroup && !phoneGroup.querySelector('.phone-note')) {
         const note = document.createElement('small');
         note.className = 'phone-note';
-        note.style.color = '#666';
-        note.style.fontSize = '12px';
+        note.style.color = '#28a745';
+        note.style.fontSize = '13px';
         note.style.marginTop = '5px';
         note.style.display = 'block';
-        note.textContent = '✓ Phone number from WhatsApp';
+        note.style.fontWeight = '600';
+        note.textContent = '✓ Phone number verified from WhatsApp';
         phoneGroup.appendChild(note);
       }
       
-      console.log('Phone number captured from URL:', displayPhone);
+      console.log('Phone number captured from URL:', phoneFromUrl);
+      console.log('Displayed as:', displayPhone);
     }
   });
     
