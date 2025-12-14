@@ -359,140 +359,6 @@
       100% { transform: rotate(360deg); }
     }
     
-    /* Success Modal Styles */
-    .success-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      z-index: 9999;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      backdrop-filter: blur(5px);
-    }
-    
-    .success-modal.show {
-      display: flex;
-    }
-    
-    .success-modal-content {
-      background: white;
-      border-radius: 15px;
-      padding: 40px;
-      max-width: 500px;
-      width: 100%;
-      text-align: center;
-      animation: slideUp 0.4s ease-out;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    }
-    
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(50px) scale(0.9);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-    
-    .success-checkmark {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: #28a745;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 20px;
-      font-size: 50px;
-      color: white;
-      animation: scaleIn 0.5s ease-out;
-    }
-    
-    @keyframes scaleIn {
-      0% { transform: scale(0); }
-      50% { transform: scale(1.2); }
-      100% { transform: scale(1); }
-    }
-    
-    .success-modal h2 {
-      color: #28a745;
-      margin-bottom: 15px;
-      font-size: 28px;
-    }
-    
-    .success-modal .order-number {
-      background: #f8f9fa;
-      padding: 15px;
-      border-radius: 8px;
-      margin: 20px 0;
-      border-left: 4px solid #DC143C;
-    }
-    
-    .success-modal .order-number span {
-      color: #666;
-      font-size: 14px;
-    }
-    
-    .success-modal .order-number strong {
-      color: #8B0000;
-      font-size: 24px;
-      display: block;
-      margin-top: 5px;
-      letter-spacing: 1px;
-    }
-    
-    .success-modal .info-box {
-      background: #fff3cd;
-      border: 1px solid #ffc107;
-      border-radius: 8px;
-      padding: 15px;
-      margin: 20px 0;
-      color: #856404;
-      text-align: left;
-    }
-    
-    .success-modal .info-box strong {
-      display: block;
-      margin-bottom: 5px;
-      font-size: 16px;
-    }
-    
-    .success-modal p {
-      color: #666;
-      line-height: 1.6;
-      margin: 15px 0;
-    }
-    
-    .countdown-box {
-      margin: 30px 0;
-      padding: 20px;
-      background: #e3f2fd;
-      border-radius: 10px;
-      border-left: 4px solid #2196F3;
-    }
-    
-    .countdown-box p {
-      color: #1976d2;
-      margin: 0;
-      font-size: 18px;
-      font-weight: 600;
-    }
-    
-    .countdown-number {
-      font-size: 48px;
-      font-weight: bold;
-      color: #DC143C;
-      display: block;
-      margin: 10px 0;
-    }
-    
     @media (min-width: 600px) {
       .header h1 {
         font-size: 32px;
@@ -935,46 +801,9 @@
     </div>
   </div>
 
-  <!-- Success Modal -->
-  <div id="successModal" class="success-modal">
-    <div class="success-modal-content">
-      <div class="success-checkmark">✓</div>
-      <h2>Order Confirmed! 🎉</h2>
-      
-      <div class="order-number">
-        <span>Your Order Number:</span>
-        <strong id="modalOrderNumber">EM12121234</strong>
-      </div>
-      
-      <p>
-        Thank you for your order! We've received it and you'll receive a WhatsApp confirmation shortly.
-      </p>
-      
-      <div class="info-box">
-        <strong>📱 Check Your WhatsApp!</strong>
-        You'll receive your order confirmation via WhatsApp in a few moments.
-      </div>
-      
-      <p style="font-size: 14px; margin-top: 15px;">
-        <strong>Payment:</strong> Cash only on delivery or pickup.
-      </p>
-      
-      <!-- Countdown Display -->
-      <div class="countdown-box">
-        <p>Redirecting to WhatsApp in</p>
-        <span id="redirectCountdown" class="countdown-number">5</span>
-      </div>
-      
-      <p style="font-size: 13px; color: #999; text-align: center; margin-top: 10px;">
-        Please wait while we open WhatsApp...
-      </p>
-    </div>
-  </div>
-
   <script>
-    // ⚠️ IMPORTANT: REPLACE THESE VALUES
+    // ⚠️ IMPORTANT: REPLACE THIS WITH YOUR ACTUAL APPS SCRIPT URL
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby4kvJJv3Hn-HZj2RQmkE83XV1-lk307zetg3JWY7mSAiPff_9GNAKdDi5OgE2354UEfA/exec';
-    const WHATSAPP_NUMBER = '12462367556';
     
     let orderItems = [];
     
@@ -1115,32 +944,6 @@
       }
     }
     
-    // Success Modal - Apps Script handles Botpress notification
-    function showSuccessModal(orderNumber) {
-      document.getElementById('modalOrderNumber').textContent = orderNumber;
-      document.getElementById('successModal').classList.add('show');
-      document.body.style.overflow = 'hidden';
-      
-      // Auto-redirect to WhatsApp after 5 seconds
-      let countdown = 5;
-      const countdownDisplay = document.getElementById('redirectCountdown');
-      
-      if (countdownDisplay) {
-        countdownDisplay.textContent = countdown;
-        
-        const countdownInterval = setInterval(() => {
-          countdown--;
-          countdownDisplay.textContent = countdown;
-          
-          if (countdown <= 0) {
-            clearInterval(countdownInterval);
-            // Apps Script already sent to Botpress, just redirect
-            window.location.href = `https://wa.me/${WHATSAPP_NUMBER}`;
-          }
-        }, 1000);
-      }
-    }
-    
     // Form submission
     document.getElementById('orderForm').addEventListener('submit', async function(e) {
       e.preventDefault();
@@ -1171,99 +974,61 @@
       const totalAmount = '$' + total.toFixed(2) + ' BBD';
       
       // Show loading
-// Form submission
-  document.getElementById('orderForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    if (orderItems.length === 0) {
-      showMessage('Please select at least one item', 'error');
-      return;
-    }
-    
-    const customerName = document.getElementById('customerName').value.trim();
-    const phoneNumber = document.getElementById('phoneNumber').value.trim();
-    const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
-    const orderType = document.getElementById('orderType').value;
-    const specialInstructions = document.getElementById('specialInstructions').value.trim();
-    
-    if (!orderType) {
-      showMessage('Please select order type', 'error');
-      return;
-    }
-    
-    let subtotal = orderItems.reduce((sum, item) => sum + item.subtotal, 0);
-    let total = orderType === 'Delivery' ? subtotal * 1.10 : subtotal;
-    
-    const orderDetails = orderItems.map(item => 
-      `${item.name} x${item.quantity} = $${item.subtotal.toFixed(2)}`
-    ).join('\n');
-    
-    const totalAmount = '$' + total.toFixed(2) + ' BBD';
-    
-    // Show loading
-    document.getElementById('loading').style.display = 'block';
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Submitting...';
-    
-    // Build URL parameters (same as before)
-    const params = new URLSearchParams({
-      customerName: customerName,
-      phoneNumber: phoneNumber,
-      deliveryAddress: deliveryAddress,
-      orderType: orderType,
-      orderItems: orderDetails,
-      totalAmount: totalAmount,
-      specialInstructions: specialInstructions || 'None'
-    });
-    
-    // --- CHANGE STARTS HERE ---
-    // We do NOT add params to the URL string anymore
-    
-    try {
-      const response = await fetch(SCRIPT_URL, {
-        method: 'POST', // Changed to POST
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: params // Data sent in the body
+      document.getElementById('loading').style.display = 'block';
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+      
+      // Build URL with parameters
+      const params = new URLSearchParams({
+        customerName: customerName,
+        phoneNumber: phoneNumber,
+        deliveryAddress: deliveryAddress,
+        orderType: orderType,
+        orderItems: orderDetails,
+        totalAmount: totalAmount,
+        specialInstructions: specialInstructions || 'None'
       });
       
-      const result = await response.json();
+      const url = SCRIPT_URL + '?' + params.toString();
       
-      document.getElementById('loading').style.display = 'none';
-      
-      if (result.result === 'success') { // Note: Backend returns 'result', not 'success' in my updated script
-        // Show success modal
-        showSuccessModal(result.orderNumber);
+      try {
+        const response = await fetch(url, {
+          method: 'GET',
+          redirect: 'follow'
+        });
         
-        // Reset form
-        document.getElementById('orderForm').reset();
-        document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
-        document.querySelectorAll('.menu-items').forEach(el => el.classList.remove('show'));
-        document.querySelectorAll('.category-header').forEach(el => el.classList.remove('active'));
-        orderItems = [];
-        updateOrder();
+        const result = await response.json();
         
+        document.getElementById('loading').style.display = 'none';
+        
+        if (result.success) {
+          showMessage('✓ ' + result.message + ' Order #' + result.orderNumber, 'success');
+          
+          // Reset form
+          document.getElementById('orderForm').reset();
+          document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+          document.querySelectorAll('.menu-items').forEach(el => el.classList.remove('show'));
+          document.querySelectorAll('.category-header').forEach(el => el.classList.remove('active'));
+          orderItems = [];
+          updateOrder();
+          
+          submitBtn.textContent = 'Submit Order';
+          submitBtn.disabled = false;
+        } else {
+          showMessage('✗ ' + result.message, 'error');
+          submitBtn.textContent = 'Submit Order';
+          submitBtn.disabled = false;
+        }
+        
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('loading').style.display = 'none';
         submitBtn.textContent = 'Submit Order';
         submitBtn.disabled = false;
-      } else {
-        showMessage('✗ ' + result.message, 'error');
-        submitBtn.textContent = 'Submit Order';
-        submitBtn.disabled = false;
+        showMessage('✗ Error submitting order. Please try again.', 'error');
       }
-      
-    } catch (error) {
-      console.error('Error:', error);
-      document.getElementById('loading').style.display = 'none';
-      submitBtn.textContent = 'Submit Order';
-      submitBtn.disabled = false;
-      // Note: Sometimes Fetch throws an error on Google Apps Script redirects even if it worked.
-      // If you see an error but the data is in the sheet, let me know, and we can adjust this.
-      showMessage('✗ Error submitting order. Please check your internet.', 'error');
-    }
-    // --- CHANGE ENDS HERE ---
-  });
+    });
     
     function showMessage(text, type) {
       const msg = document.getElementById('message');
