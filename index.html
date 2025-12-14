@@ -1121,31 +1121,43 @@
   }
   
   // Success Modal Functions with Auto-Redirect
-  function showSuccessModal(orderNumber, orderDetails, totalAmount, customerData) {
-    document.getElementById('modalOrderNumber').textContent = orderNumber;
-    document.getElementById('successModal').classList.add('show');
-    document.body.style.overflow = 'hidden';
+  function showSuccessModal(orderNumber, orderDetails, totalAmount) {
+  document.getElementById('modalOrderNumber').textContent = orderNumber;
+  document.getElementById('successModal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  
+  // Auto-redirect to WhatsApp after 5 seconds
+  let countdown = 5;
+  const countdownDisplay = document.getElementById('redirectCountdown');
+  
+  if (countdownDisplay) {
+    countdownDisplay.textContent = countdown;
     
-    // Auto-redirect after 5 seconds
-    let countdown = 5;
-    const countdownDisplay = document.getElementById('redirectCountdown');
-    
-    if (countdownDisplay) {
+    const countdownInterval = setInterval(() => {
+      countdown--;
       countdownDisplay.textContent = countdown;
       
-      const countdownInterval = setInterval(() => {
-        countdown--;
-        countdownDisplay.textContent = countdown;
-        
-        if (countdown <= 0) {
-          clearInterval(countdownInterval);
-          sendConfirmationAndRedirect(orderNumber, orderDetails, totalAmount, customerData);
-        }
-      }, 1000);
-    }
+      if (countdown <= 0) {
+        clearInterval(countdownInterval);
+        redirectToWhatsApp(orderNumber, orderDetails, totalAmount);
+      }
+    }, 1000);
   }
+}
+
+function redirectToWhatsApp(orderNumber, orderDetails, totalAmount) {
+  // Format the message for WhatsApp
+  const message = encodeURIComponent(
+    `✅ Order Confirmed!\n\n` +
+    `Order #${orderNumber}\n\n` +
+    `${orderDetails}\n\n` +
+    `Total: ${totalAmount}\n\n` +
+    `Thank you for your order! We'll contact you shortly.`
+  );
   
-  function sendConfirmationAndRedirect(orderNumber, orderDetails, totalAmount, customerData) {
+  // Redirect to WhatsApp
+  window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
+}
     // Send order confirmation trigger to Make.com
     fetch(MAKE_WEBHOOK, {
       method: 'POST',
