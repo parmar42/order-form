@@ -980,6 +980,7 @@
   const MAKE_WEBHOOK = 'YOUR_MAKE_COM_WEBHOOK_URL'; // For sending confirmations
   const WHATSAPP_NUMBER = '1246XXXXXXX'; // Your restaurant's WhatsApp number
   
+   
   let orderItems = [];
   
   // Category toggle
@@ -1121,67 +1122,41 @@
   
   // Success Modal Functions with Auto-Redirect
   function showSuccessModal(orderNumber, orderDetails, totalAmount) {
-  document.getElementById('modalOrderNumber').textContent = orderNumber;
-  document.getElementById('successModal').classList.add('show');
-  document.body.style.overflow = 'hidden';
-  
-  // Auto-redirect to WhatsApp after 5 seconds
-  let countdown = 5;
-  const countdownDisplay = document.getElementById('redirectCountdown');
-  
-  if (countdownDisplay) {
-    countdownDisplay.textContent = countdown;
+    document.getElementById('modalOrderNumber').textContent = orderNumber;
+    document.getElementById('successModal').classList.add('show');
+    document.body.style.overflow = 'hidden';
     
-    const countdownInterval = setInterval(() => {
-      countdown--;
+    // Auto-redirect to WhatsApp after 5 seconds
+    let countdown = 5;
+    const countdownDisplay = document.getElementById('redirectCountdown');
+    
+    if (countdownDisplay) {
       countdownDisplay.textContent = countdown;
       
-      if (countdown <= 0) {
-        clearInterval(countdownInterval);
-        redirectToWhatsApp(orderNumber, orderDetails, totalAmount);
-      }
-    }, 1000);
+      const countdownInterval = setInterval(() => {
+        countdown--;
+        countdownDisplay.textContent = countdown;
+        
+        if (countdown <= 0) {
+          clearInterval(countdownInterval);
+          redirectToWhatsApp(orderNumber, orderDetails, totalAmount);
+        }
+      }, 1000);
+    }
   }
-}
-
-function redirectToWhatsApp(orderNumber, orderDetails, totalAmount) {
-  // Format the message for WhatsApp
-  const message = encodeURIComponent(
-    `✅ Order Confirmed!\n\n` +
-    `Order #${orderNumber}\n\n` +
-    `${orderDetails}\n\n` +
-    `Total: ${totalAmount}\n\n` +
-    `Thank you for your order! We'll contact you shortly.`
-  );
   
-      // Send order confirmation trigger to Make.com
-    fetch(MAKE_WEBHOOK, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        action: 'send_order_confirmation',
-        orderNumber: orderNumber,
-        customerName: customerData.customerName,
-        phoneNumber: customerData.phoneNumber,
-        orderType: customerData.orderType,
-        deliveryAddress: customerData.deliveryAddress,
-        orderDetails: orderDetails,
-        totalAmount: totalAmount,
-        timestamp: new Date().toISOString()
-      })
-    })
-    .then(() => {
-      console.log('Confirmation sent to Make.com');
-    })
-    .catch(error => {
-      console.error('Error sending confirmation:', error);
-    })
-    .finally(() => {
-      // Redirect to WhatsApp regardless of webhook result
-      window.location.href = `https://wa.me/${WHATSAPP_NUMBER}`;
-    });
+  function redirectToWhatsApp(orderNumber, orderDetails, totalAmount) {
+    // Format the message for WhatsApp
+    const message = encodeURIComponent(
+      `✅ Order Confirmed!\n\n` +
+      `Order #${orderNumber}\n\n` +
+      `${orderDetails}\n\n` +
+      `Total: ${totalAmount}\n\n` +
+      `Thank you for your order! We'll contact you shortly.`
+    );
+    
+    // Redirect to WhatsApp
+    window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
   }
   
   // Form submission
@@ -1243,15 +1218,8 @@ function redirectToWhatsApp(orderNumber, orderDetails, totalAmount) {
       document.getElementById('loading').style.display = 'none';
       
       if (result.success) {
-        // Show success modal with customer data for webhook
-        const customerData = {
-          customerName,
-          phoneNumber,
-          deliveryAddress,
-          orderType
-        };
-        
-        showSuccessModal(result.orderNumber, orderDetails, totalAmount, customerData);
+        // Show success modal with order details for WhatsApp redirect
+        showSuccessModal(result.orderNumber, orderDetails, totalAmount);
         
         // Reset form
         document.getElementById('orderForm').reset();
