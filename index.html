@@ -1171,62 +1171,99 @@
       const totalAmount = '$' + total.toFixed(2) + ' BBD';
       
       // Show loading
-      document.getElementById('loading').style.display = 'block';
-      const submitBtn = document.getElementById('submitBtn');
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Submitting...';
-      
-      // Build URL with parameters
-      const params = new URLSearchParams({
-        customerName: customerName,
-        phoneNumber: phoneNumber,
-        deliveryAddress: deliveryAddress,
-        orderType: orderType,
-        orderItems: orderDetails,
-        totalAmount: totalAmount,
-        specialInstructions: specialInstructions || 'None'
+// Form submission
+  document.getElementById('orderForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    if (orderItems.length === 0) {
+      showMessage('Please select at least one item', 'error');
+      return;
+    }
+    
+    const customerName = document.getElementById('customerName').value.trim();
+    const phoneNumber = document.getElementById('phoneNumber').value.trim();
+    const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
+    const orderType = document.getElementById('orderType').value;
+    const specialInstructions = document.getElementById('specialInstructions').value.trim();
+    
+    if (!orderType) {
+      showMessage('Please select order type', 'error');
+      return;
+    }
+    
+    let subtotal = orderItems.reduce((sum, item) => sum + item.subtotal, 0);
+    let total = orderType === 'Delivery' ? subtotal * 1.10 : subtotal;
+    
+    const orderDetails = orderItems.map(item => 
+      `${item.name} x${item.quantity} = $${item.subtotal.toFixed(2)}`
+    ).join('\n');
+    
+    const totalAmount = '$' + total.toFixed(2) + ' BBD';
+    
+    // Show loading
+    document.getElementById('loading').style.display = 'block';
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting...';
+    
+    // Build URL parameters (same as before)
+    const params = new URLSearchParams({
+      customerName: customerName,
+      phoneNumber: phoneNumber,
+      deliveryAddress: deliveryAddress,
+      orderType: orderType,
+      orderItems: orderDetails,
+      totalAmount: totalAmount,
+      specialInstructions: specialInstructions || 'None'
+    });
+    
+    // --- CHANGE STARTS HERE ---
+    // We do NOT add params to the URL string anymore
+    
+    try {
+      const response = await fetch(SCRIPT_URL, {
+        method: 'POST', // Changed to POST
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: params // Data sent in the body
       });
       
-      const url = SCRIPT_URL + '?' + params.toString();
+      const result = await response.json();
       
-      try {
-        const response = await fetch(url, {
-          method: 'GET',
-          redirect: 'follow'
-        });
+      document.getElementById('loading').style.display = 'none';
+      
+      if (result.result === 'success') { // Note: Backend returns 'result', not 'success' in my updated script
+        // Show success modal
+        showSuccessModal(result.orderNumber);
         
-        const result = await response.json();
+        // Reset form
+        document.getElementById('orderForm').reset();
+        document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+        document.querySelectorAll('.menu-items').forEach(el => el.classList.remove('show'));
+        document.querySelectorAll('.category-header').forEach(el => el.classList.remove('active'));
+        orderItems = [];
+        updateOrder();
         
-        document.getElementById('loading').style.display = 'none';
-        
-        if (result.success) {
-          // Show success modal - Apps Script already handled Botpress
-          showSuccessModal(result.orderNumber);
-          
-          // Reset form
-          document.getElementById('orderForm').reset();
-          document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
-          document.querySelectorAll('.menu-items').forEach(el => el.classList.remove('show'));
-          document.querySelectorAll('.category-header').forEach(el => el.classList.remove('active'));
-          orderItems = [];
-          updateOrder();
-          
-          submitBtn.textContent = 'Submit Order';
-          submitBtn.disabled = false;
-        } else {
-          showMessage('✗ ' + result.message, 'error');
-          submitBtn.textContent = 'Submit Order';
-          submitBtn.disabled = false;
-        }
-        
-      } catch (error) {
-        console.error('Error:', error);
-        document.getElementById('loading').style.display = 'none';
         submitBtn.textContent = 'Submit Order';
         submitBtn.disabled = false;
-        showMessage('✗ Error submitting order. Please try again.', 'error');
+      } else {
+        showMessage('✗ ' + result.message, 'error');
+        submitBtn.textContent = 'Submit Order';
+        submitBtn.disabled = false;
       }
-    });
+      
+    } catch (error) {
+      console.error('Error:', error);
+      document.getElementById('loading').style.display = 'none';
+      submitBtn.textContent = 'Submit Order';
+      submitBtn.disabled = false;
+      // Note: Sometimes Fetch throws an error on Google Apps Script redirects even if it worked.
+      // If you see an error but the data is in the sheet, let me know, and we can adjust this.
+      showMessage('✗ Error submitting order. Please check your internet.', 'error');
+    }
+    // --- CHANGE ENDS HERE ---
+  });
     
     function showMessage(text, type) {
       const msg = document.getElementById('message');
