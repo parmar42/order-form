@@ -847,8 +847,8 @@
   </div>
 
  <script>
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby4kvJJv3Hn-HZj2RQmkE83XV1-lk307zetg3JWY7mSAiPff_9GNAKdDi5OgE2354UEfA/exec';
-  const WHATSAPP_NUMBER = '12462367556';
+  const SCRIPT_URL = 'https://script.google.com/macros/library/d/1IKZeJ5t-sFB7rf0ExnNNvHB_q99AsdbAMaoxXKPcctSNdnZO30Hcs4J-/1';
+  const WHATSAPP_NUMBER = '12461234567';
   
   let orderItems = [];
   let cartExpanded = true;
@@ -1376,14 +1376,16 @@ function showAlert(title, message) {
       
       console.log('Submitting order:', orderData);
       
-      const response = await fetch(SCRIPT_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(orderData),
-        redirect: 'follow'
-      });
+      // Build query string
+const params = new URLSearchParams({
+  customerName,
+  phoneNumber,
+  deliveryAddress,
+  orderType,
+  orderItems: orderDetails,
+  totalAmount,
+  specialInstructions: specialInstructions || 'None'
+});
       
       const result = await response.json();
       
@@ -1473,6 +1475,7 @@ function showAlert(title, message) {
 </body>
 
 </html>
+
 
 
 
