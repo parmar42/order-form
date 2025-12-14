@@ -182,12 +182,10 @@
   <div id="debug" class="debug"></div>
   
   <script>
-    // ⚠️ REPLACE THIS WITH YOUR APPS SCRIPT URL
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx7e4xYSTNj6iZfH6_OzonTo0ZPRQeVazMejHgCcDGT0woTAnYABM4dlkATcMXv0IMN5Q/exec';
     
     let selectedItems = [];
     
-    // Debug function
     function debug(msg) {
       const debugDiv = document.getElementById('debug');
       debugDiv.classList.add('show');
@@ -195,7 +193,6 @@
       console.log(msg);
     }
     
-    // Menu item selection
     document.querySelectorAll('.menu-item').forEach(item => {
       const checkbox = item.querySelector('.item-check');
       
@@ -220,7 +217,6 @@
       document.getElementById('submitBtn').disabled = !anySelected;
     }
     
-    // Form submission
     document.getElementById('orderForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
@@ -233,7 +229,6 @@
       debug('Name: ' + customerName);
       debug('Phone: ' + phoneNumber);
       
-      // Get selected items
       let items = [];
       let total = 0;
       
@@ -276,12 +271,14 @@
         debug('Response status: ' + response.status);
         
         const responseText = await response.text();
-        debug('Response: ' + responseText.substring(0, 100));
+        debug('Response length: ' + responseText.length);
+        debug('First 100 chars: ' + responseText.substring(0, 100));
         
         let result;
         try {
           result = JSON.parse(responseText);
           debug('JSON parsed OK');
+          debug('Success: ' + result.success);
         } catch (parseError) {
           debug('JSON PARSE ERROR!');
           debug('Error: ' + parseError.message);
@@ -293,9 +290,8 @@
         if (result.success) {
           debug('✓ SUCCESS!');
           debug('Order #: ' + result.orderNumber);
-          alert('Order Submitted!\n\nOrder #: ' + result.orderNumber);
+          alert('Order Submitted!\n\nOrder #: ' + result.orderNumber + '\n\nCheck Google Sheets!');
           
-          // Reset form
           document.getElementById('orderForm').reset();
           document.querySelectorAll('.menu-item').forEach(item => {
             item.classList.remove('selected');
