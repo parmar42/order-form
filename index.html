@@ -470,25 +470,27 @@
       margin: 15px 0;
     }
     
-    .close-modal-btn {
-      background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
-      color: white;
-      border: none;
-      padding: 15px 40px;
-      border-radius: 8px;
-      font-size: 16px;
+    .countdown-box {
+      margin: 30px 0;
+      padding: 20px;
+      background: #e3f2fd;
+      border-radius: 10px;
+      border-left: 4px solid #2196F3;
+    }
+    
+    .countdown-box p {
+      color: #1976d2;
+      margin: 0;
+      font-size: 18px;
       font-weight: 600;
-      cursor: pointer;
-      margin-top: 20px;
-      transition: transform 0.2s;
     }
     
-    .close-modal-btn:hover {
-      transform: translateY(-2px);
-    }
-    
-    .close-modal-btn:active {
-      transform: translateY(0);
+    .countdown-number {
+      font-size: 48px;
+      font-weight: bold;
+      color: #DC143C;
+      display: block;
+      margin: 10px 0;
     }
     
     @media (min-width: 600px) {
@@ -934,328 +936,359 @@
   </div>
 
   <!-- Success Modal -->
-<div id="successModal" class="success-modal">
-  <div class="success-modal-content">
-    <div class="success-checkmark">✓</div>
-    <h2>Order Confirmed! 🎉</h2>
-    
-    <div class="order-number">
-      <span>Your Order Number:</span>
-      <strong id="modalOrderNumber">EM12121234</strong>
-    </div>
-    
-    <p>
-      Thank you for your order! We've received it and will contact you shortly to confirm your order details.
-    </p>
-    
-    <div class="info-box">
-      <strong>📞 We'll call you soon!</strong>
-      We will contact you at the phone number you provided to confirm delivery details.
-    </div>
-    
-    <p style="font-size: 14px; margin-top: 15px;">
-      <strong>Payment:</strong> Cash only on delivery or pickup.
-    </p>
-    
-    <!-- Countdown Display -->
-    <div style="margin: 30px 0; padding: 20px; background: #e3f2fd; border-radius: 10px; border-left: 4px solid #2196F3;">
-      <p style="color: #1976d2; margin: 0; font-size: 18px; text-align: center;">
-        <strong>📱 Redirecting to WhatsApp in</strong>
+  <div id="successModal" class="success-modal">
+    <div class="success-modal-content">
+      <div class="success-checkmark">✓</div>
+      <h2>Order Confirmed! 🎉</h2>
+      
+      <div class="order-number">
+        <span>Your Order Number:</span>
+        <strong id="modalOrderNumber">EM12121234</strong>
+      </div>
+      
+      <p>
+        Thank you for your order! We've received it and you'll receive a WhatsApp confirmation shortly.
       </p>
-      <p style="margin: 10px 0 0 0; text-align: center;">
-        <span id="redirectCountdown" style="font-size: 48px; font-weight: bold; color: #DC143C; display: inline-block;">5</span>
+      
+      <div class="info-box">
+        <strong>📱 Check Your WhatsApp!</strong>
+        You'll receive your order confirmation via WhatsApp in a few moments.
+      </div>
+      
+      <p style="font-size: 14px; margin-top: 15px;">
+        <strong>Payment:</strong> Cash only on delivery or pickup.
+      </p>
+      
+      <!-- Countdown Display -->
+      <div class="countdown-box">
+        <p>Redirecting to WhatsApp in</p>
+        <span id="redirectCountdown" class="countdown-number">5</span>
+      </div>
+      
+      <p style="font-size: 13px; color: #999; text-align: center; margin-top: 10px;">
+        Please wait while we open WhatsApp...
       </p>
     </div>
-    
-    <p style="font-size: 13px; color: #999; text-align: center; margin-top: 15px;">
-      Please wait while we redirect you...
-    </p>
   </div>
-</div>
 
   <script>
-
-  // ⚠️ IMPORTANT: REPLACE THESE VALUES
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxYBGZBX2ZSJcadhRFno2wHqf7E6KkbZEqrhK4iAH4Bm17amFu3FO1JuDZUUKhtSLoYxw/exec';
-  const MAKE_WEBHOOK = 'YOUR_MAKE_COM_WEBHOOK_URL'; // For sending confirmations
-  const WHATSAPP_NUMBER = '12462367556'; // Your restaurant's WhatsApp number
-  
-   
-  let orderItems = [];
-  
-  // Category toggle
-  document.querySelectorAll('.category-header').forEach(header => {
-    header.addEventListener('click', function() {
-      const targetId = this.getAttribute('data-target');
-      const target = document.getElementById(targetId);
-      const isShown = target.classList.contains('show');
-      
-      document.querySelectorAll('.menu-items').forEach(items => items.classList.remove('show'));
-      document.querySelectorAll('.category-header').forEach(h => h.classList.remove('active'));
-      
-      if (!isShown) {
-        target.classList.add('show');
-        this.classList.add('active');
-      }
-    });
-  });
-  
-  // Menu item selection
-  document.querySelectorAll('.menu-item').forEach(item => {
-    const checkbox = item.querySelector('.item-checkbox');
+    // ⚠️ IMPORTANT: REPLACE THESE VALUES
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxYBGZBX2ZSJcadhRFno2wHqf7E6KkbZEqrhK4iAH4Bm17amFu3FO1JuDZUUKhtSLoYxw/exec';
+    const BOTPRESS_WEBHOOK = 'YOUR_BOTPRESS_WEBHOOK_URL'; // e.g., https://webhook.botpress.cloud/YOUR_BOT_ID
+    const WHATSAPP_NUMBER = '1246XXXXXXX'; // Your restaurant's WhatsApp number
     
-    checkbox.addEventListener('change', function() {
-      if (this.checked) {
-        item.classList.add('selected');
-      } else {
-        item.classList.remove('selected');
-        item.querySelector('.qty-display').textContent = '1';
-      }
-      updateOrder();
+    let orderItems = [];
+    
+    // Category toggle
+    document.querySelectorAll('.category-header').forEach(header => {
+      header.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-target');
+        const target = document.getElementById(targetId);
+        const isShown = target.classList.contains('show');
+        
+        document.querySelectorAll('.menu-items').forEach(items => items.classList.remove('show'));
+        document.querySelectorAll('.category-header').forEach(h => h.classList.remove('active'));
+        
+        if (!isShown) {
+          target.classList.add('show');
+          this.classList.add('active');
+        }
+      });
     });
     
-    item.addEventListener('click', function(e) {
-      if (e.target.classList.contains('qty-btn') || e.target === checkbox) {
-        return;
-      }
-      checkbox.checked = !checkbox.checked;
-      checkbox.dispatchEvent(new Event('change'));
+    // Menu item selection
+    document.querySelectorAll('.menu-item').forEach(item => {
+      const checkbox = item.querySelector('.item-checkbox');
+      
+      checkbox.addEventListener('change', function() {
+        if (this.checked) {
+          item.classList.add('selected');
+        } else {
+          item.classList.remove('selected');
+          item.querySelector('.qty-display').textContent = '1';
+        }
+        updateOrder();
+      });
+      
+      item.addEventListener('click', function(e) {
+        if (e.target.classList.contains('qty-btn') || e.target === checkbox) {
+          return;
+        }
+        checkbox.checked = !checkbox.checked;
+        checkbox.dispatchEvent(new Event('change'));
+      });
     });
-  });
-  
-  // Quantity controls
-  document.querySelectorAll('.qty-plus').forEach(btn => {
-    btn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      const display = this.previousElementSibling;
-      let qty = parseInt(display.textContent);
-      qty++;
-      display.textContent = qty;
-      updateOrder();
-    });
-  });
-  
-  document.querySelectorAll('.qty-minus').forEach(btn => {
-    btn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      const display = this.nextElementSibling;
-      let qty = parseInt(display.textContent);
-      if (qty > 1) {
-        qty--;
+    
+    // Quantity controls
+    document.querySelectorAll('.qty-plus').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const display = this.previousElementSibling;
+        let qty = parseInt(display.textContent);
+        qty++;
         display.textContent = qty;
         updateOrder();
-      }
+      });
     });
-  });
-  
-  document.getElementById('orderType').addEventListener('change', updateOrder);
-  
-  function updateOrder() {
-    orderItems = [];
-    let subtotal = 0;
     
-    document.querySelectorAll('.menu-item.selected').forEach(item => {
-      const name = item.getAttribute('data-item');
-      const price = parseFloat(item.getAttribute('data-price'));
-      const qty = parseInt(item.querySelector('.qty-display').textContent);
-      const itemSubtotal = price * qty;
+    document.querySelectorAll('.qty-minus').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const display = this.nextElementSibling;
+        let qty = parseInt(display.textContent);
+        if (qty > 1) {
+          qty--;
+          display.textContent = qty;
+          updateOrder();
+        }
+      });
+    });
+    
+    document.getElementById('orderType').addEventListener('change', updateOrder);
+    
+    function updateOrder() {
+      orderItems = [];
+      let subtotal = 0;
       
-      orderItems.push({
-        name: name,
-        price: price,
-        quantity: qty,
-        subtotal: itemSubtotal
+      document.querySelectorAll('.menu-item.selected').forEach(item => {
+        const name = item.getAttribute('data-item');
+        const price = parseFloat(item.getAttribute('data-price'));
+        const qty = parseInt(item.querySelector('.qty-display').textContent);
+        const itemSubtotal = price * qty;
+        
+        orderItems.push({
+          name: name,
+          price: price,
+          quantity: qty,
+          subtotal: itemSubtotal
+        });
+        
+        subtotal += itemSubtotal;
       });
       
-      subtotal += itemSubtotal;
-    });
-    
-    const summaryDiv = document.getElementById('orderSummary');
-    const summaryItems = document.getElementById('summaryItems');
-    const summaryCalculations = document.getElementById('summaryCalculations');
-    const submitBtn = document.getElementById('submitBtn');
-    const orderType = document.getElementById('orderType').value;
-    
-    if (orderItems.length > 0) {
-      summaryDiv.style.display = 'block';
+      const summaryDiv = document.getElementById('orderSummary');
+      const summaryItems = document.getElementById('summaryItems');
+      const summaryCalculations = document.getElementById('summaryCalculations');
+      const submitBtn = document.getElementById('submitBtn');
+      const orderType = document.getElementById('orderType').value;
       
-      summaryItems.innerHTML = orderItems.map(item => `
-        <div class="summary-item">
-          <span>${item.name} × ${item.quantity}</span>
-          <span>$${item.subtotal.toFixed(2)}</span>
-        </div>
-      `).join('');
-      
-      let total = subtotal;
-      let calculationsHTML = `
-        <div class="summary-subtotal">
-          <span>Subtotal:</span>
-          <span>$${subtotal.toFixed(2)}</span>
-        </div>
-      `;
-      
-      if (orderType === 'Delivery') {
-        const serviceCharge = subtotal * 0.10;
-        total = subtotal + serviceCharge;
-        calculationsHTML += `
+      if (orderItems.length > 0) {
+        summaryDiv.style.display = 'block';
+        
+        summaryItems.innerHTML = orderItems.map(item => `
           <div class="summary-item">
-            <span>Service Charge (10%):</span>
-            <span>$${serviceCharge.toFixed(2)}</span>
+            <span>${item.name} × ${item.quantity}</span>
+            <span>$${item.subtotal.toFixed(2)}</span>
+          </div>
+        `).join('');
+        
+        let total = subtotal;
+        let calculationsHTML = `
+          <div class="summary-subtotal">
+            <span>Subtotal:</span>
+            <span>$${subtotal.toFixed(2)}</span>
           </div>
         `;
-      }
-      
-      calculationsHTML += `
-        <div class="summary-total">
-          <span>TOTAL:</span>
-          <span>$${total.toFixed(2)} BBD</span>
-        </div>
-      `;
-      
-      summaryCalculations.innerHTML = calculationsHTML;
-      submitBtn.disabled = false;
-    } else {
-      summaryDiv.style.display = 'none';
-      submitBtn.disabled = true;
-    }
-  }
-  
-  // Success Modal Functions with Auto-Redirect
-  function showSuccessModal(orderNumber, orderDetails, totalAmount) {
-    document.getElementById('modalOrderNumber').textContent = orderNumber;
-    document.getElementById('successModal').classList.add('show');
-    document.body.style.overflow = 'hidden';
-    
-    // Auto-redirect to WhatsApp after 5 seconds
-    let countdown = 5;
-    const countdownDisplay = document.getElementById('redirectCountdown');
-    
-    if (countdownDisplay) {
-      countdownDisplay.textContent = countdown;
-      
-      const countdownInterval = setInterval(() => {
-        countdown--;
-        countdownDisplay.textContent = countdown;
         
-        if (countdown <= 0) {
-          clearInterval(countdownInterval);
-          redirectToWhatsApp(orderNumber, orderDetails, totalAmount);
+        if (orderType === 'Delivery') {
+          const serviceCharge = subtotal * 0.10;
+          total = subtotal + serviceCharge;
+          calculationsHTML += `
+            <div class="summary-item">
+              <span>Service Charge (10%):</span>
+              <span>$${serviceCharge.toFixed(2)}</span>
+            </div>
+          `;
         }
-      }, 1000);
-    }
-  }
-  
-  function redirectToWhatsApp(orderNumber, orderDetails, totalAmount) {
-    // Format the message for WhatsApp
-    const message = encodeURIComponent(
-      `✅ Order Confirmed!\n\n` +
-      `Order #${orderNumber}\n\n` +
-      `${orderDetails}\n\n` +
-      `Total: ${totalAmount}\n\n` +
-      `Thank you for your order! We'll contact you shortly.`
-    );
-    
-    // Redirect to WhatsApp
-    window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
-  }
-  
-  // Form submission
-  document.getElementById('orderForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    if (orderItems.length === 0) {
-      showMessage('Please select at least one item', 'error');
-      return;
-    }
-    
-    const customerName = document.getElementById('customerName').value.trim();
-    const phoneNumber = document.getElementById('phoneNumber').value.trim();
-    const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
-    const orderType = document.getElementById('orderType').value;
-    const specialInstructions = document.getElementById('specialInstructions').value.trim();
-    
-    if (!orderType) {
-      showMessage('Please select order type', 'error');
-      return;
-    }
-    
-    let subtotal = orderItems.reduce((sum, item) => sum + item.subtotal, 0);
-    let total = orderType === 'Delivery' ? subtotal * 1.10 : subtotal;
-    
-    const orderDetails = orderItems.map(item => 
-      `${item.name} x${item.quantity} = $${item.subtotal.toFixed(2)}`
-    ).join('\n');
-    
-    const totalAmount = '$' + total.toFixed(2) + ' BBD';
-    
-    // Show loading
-    document.getElementById('loading').style.display = 'block';
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Submitting...';
-    
-    // Build URL with parameters
-    const params = new URLSearchParams({
-      customerName: customerName,
-      phoneNumber: phoneNumber,
-      deliveryAddress: deliveryAddress,
-      orderType: orderType,
-      orderItems: orderDetails,
-      totalAmount: totalAmount,
-      specialInstructions: specialInstructions || 'None'
-    });
-    
-    const url = SCRIPT_URL + '?' + params.toString();
-    
-    try {
-      const response = await fetch(url, {
-        method: 'GET',
-        redirect: 'follow'
-      });
-      
-      const result = await response.json();
-      
-      document.getElementById('loading').style.display = 'none';
-      
-      if (result.success) {
-        // Show success modal with order details for WhatsApp redirect
-        showSuccessModal(result.orderNumber, orderDetails, totalAmount);
         
-        // Reset form
-        document.getElementById('orderForm').reset();
-        document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
-        document.querySelectorAll('.menu-items').forEach(el => el.classList.remove('show'));
-        document.querySelectorAll('.category-header').forEach(el => el.classList.remove('active'));
-        orderItems = [];
-        updateOrder();
+        calculationsHTML += `
+          <div class="summary-total">
+            <span>TOTAL:</span>
+            <span>$${total.toFixed(2)} BBD</span>
+          </div>
+        `;
         
-        submitBtn.textContent = 'Submit Order';
+        summaryCalculations.innerHTML = calculationsHTML;
         submitBtn.disabled = false;
       } else {
-        showMessage('✗ ' + result.message, 'error');
-        submitBtn.textContent = 'Submit Order';
-        submitBtn.disabled = false;
+        summaryDiv.style.display = 'none';
+        submitBtn.disabled = true;
+      }
+    }
+    
+    // Success Modal Functions with Botpress Integration
+    function showSuccessModal(orderNumber, orderDetails, totalAmount, customerData) {
+      document.getElementById('modalOrderNumber').textContent = orderNumber;
+      document.getElementById('successModal').classList.add('show');
+      document.body.style.overflow = 'hidden';
+      
+      // Auto-redirect after 5 seconds
+      let countdown = 5;
+      const countdownDisplay = document.getElementById('redirectCountdown');
+      
+      if (countdownDisplay) {
+        countdownDisplay.textContent = countdown;
+        
+        const countdownInterval = setInterval(() => {
+          countdown--;
+          countdownDisplay.textContent = countdown;
+          
+          if (countdown <= 0) {
+            clearInterval(countdownInterval);
+            sendToBotpressAndRedirect(orderNumber, orderDetails, totalAmount, customerData);
+          }
+        }, 1000);
+      }
+    }
+    
+    function sendToBotpressAndRedirect(orderNumber, orderDetails, totalAmount, customerData) {
+      // Format order message
+      const formattedMessage = `✅ Order Confirmed!\n\nOrder #${orderNumber}\n\n${orderDetails}\n\nTotal: ${totalAmount}\n\nThank you for your order! We'll prepare it and contact you shortly.\n\n- East Moon Restaurant 🥡`;
+      
+      // Send to Botpress webhook
+      fetch(BOTPRESS_WEBHOOK, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'text',
+          text: formattedMessage,
+          userId: customerData.phoneNumber.replace(/[^0-9]/g, ''), // Clean phone number
+          channel: 'whatsapp',
+          conversationId: customerData.phoneNumber.replace(/[^0-9]/g, ''),
+          eventType: 'proactive',
+          payload: {
+            orderNumber: orderNumber,
+            customerName: customerData.customerName,
+            phoneNumber: customerData.phoneNumber,
+            deliveryAddress: customerData.deliveryAddress,
+            orderType: customerData.orderType,
+            orderDetails: orderDetails,
+            totalAmount: totalAmount,
+            timestamp: new Date().toISOString()
+          }
+        })
+      })
+      .then(response => {
+        console.log('Order confirmation sent to Botpress');
+        return response.json();
+      })
+      .then(data => {
+        console.log('Botpress response:', data);
+      })
+      .catch(error => {
+        console.error('Error sending to Botpress:', error);
+      })
+      .finally(() => {
+        // Redirect to WhatsApp regardless of webhook result
+        window.location.href = `https://wa.me/${WHATSAPP_NUMBER}`;
+      });
+    }
+    
+    // Form submission
+    document.getElementById('orderForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      if (orderItems.length === 0) {
+        showMessage('Please select at least one item', 'error');
+        return;
       }
       
-    } catch (error) {
-      console.error('Error:', error);
-      document.getElementById('loading').style.display = 'none';
-      submitBtn.textContent = 'Submit Order';
-      submitBtn.disabled = false;
-      showMessage('✗ Error submitting order. Please try again.', 'error');
+      const customerName = document.getElementById('customerName').value.trim();
+      const phoneNumber = document.getElementById('phoneNumber').value.trim();
+      const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
+      const orderType = document.getElementById('orderType').value;
+      const specialInstructions = document.getElementById('specialInstructions').value.trim();
+      
+      if (!orderType) {
+        showMessage('Please select order type', 'error');
+        return;
+      }
+      
+      let subtotal = orderItems.reduce((sum, item) => sum + item.subtotal, 0);
+      let total = orderType === 'Delivery' ? subtotal * 1.10 : subtotal;
+      
+      const orderDetails = orderItems.map(item => 
+        `${item.name} x${item.quantity} = $${item.subtotal.toFixed(2)}`
+      ).join('\n');
+      
+      const totalAmount = '$' + total.toFixed(2) + ' BBD';
+      
+      // Show loading
+      document.getElementById('loading').style.display = 'block';
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+      
+      // Build URL with parameters
+      const params = new URLSearchParams({
+        customerName: customerName,
+        phoneNumber: phoneNumber,
+        deliveryAddress: deliveryAddress,
+        orderType: orderType,
+        orderItems: orderDetails,
+        totalAmount: totalAmount,
+        specialInstructions: specialInstructions || 'None'
+      });
+      
+      const url = SCRIPT_URL + '?' + params.toString();
+      
+      try {
+        const response = await fetch(url, {
+          method: 'GET',
+          redirect: 'follow'
+        });
+        
+        const result = await response.json();
+        
+        document.getElementById('loading').style.display = 'none';
+        
+        if (result.success) {
+          // Show success modal with customer data for Botpress
+          const customerData = {
+            customerName,
+            phoneNumber,
+            deliveryAddress,
+            orderType
+          };
+          
+          showSuccessModal(result.orderNumber, orderDetails, totalAmount, customerData);
+          
+          // Reset form
+          document.getElementById('orderForm').reset();
+          document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+          document.querySelectorAll('.menu-items').forEach(el => el.classList.remove('show'));
+          document.querySelectorAll('.category-header').forEach(el => el.classList.remove('active'));
+          orderItems = [];
+          updateOrder();
+          
+          submitBtn.textContent = 'Submit Order';
+          submitBtn.disabled = false;
+        } else {
+          showMessage('✗ ' + result.message, 'error');
+          submitBtn.textContent = 'Submit Order';
+          submitBtn.disabled = false;
+        }
+        
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('loading').style.display = 'none';
+        submitBtn.textContent = 'Submit Order';
+        submitBtn.disabled = false;
+        showMessage('✗ Error submitting order. Please try again.', 'error');
+      }
+    });
+    
+    function showMessage(text, type) {
+      const msg = document.getElementById('message');
+      msg.textContent = text;
+      msg.className = 'message ' + type;
+      msg.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      setTimeout(() => msg.style.display = 'none', 8000);
     }
-  });
-  
-  function showMessage(text, type) {
-    const msg = document.getElementById('message');
-    msg.textContent = text;
-    msg.className = 'message ' + type;
-    msg.style.display = 'block';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    
-    setTimeout(() => msg.style.display = 'none', 8000);
-  }
-    
   </script>
 </body>
 </html>
