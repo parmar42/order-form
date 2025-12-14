@@ -847,13 +847,19 @@
   </div>
 
  <script>
-  const SCRIPT_URL = 'https://script.google.com/macros/library/d/1IKZeJ5t-sFB7rf0ExnNNvHB_q99AsdbAMaoxXKPcctSNdnZO30Hcs4J-/1';
-  const WHATSAPP_NUMBER = '12461234567';
-  
-  let orderItems = [];
-  let cartExpanded = true;
+    
+// --- GLOBAL CONSTANTS (You must define these in your HTML/JS) ---
+// const APPS_SCRIPT_URL = 'YOUR_DEPLOYED_APPS_SCRIPT_URL_HERE'; 
+// const WHATSAPP_NUMBER = '12461234567'; 
+// -----------------------------------------------------------------
 
-   // ADD THESE DEBUG FUNCTIONS
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby4kvJJv3Hn-HZj2RQmkE83XV1-lk307zetg3JWY7mSAiPff_9GNAKdDi5OgE2354UEfA/exec';
+  const WHATSAPP_NUMBER = '12462367556';
+
+let orderItems = [];
+let cartExpanded = true;
+
+// ADD THESE DEBUG FUNCTIONS (Kept as requested)
 function showDebug(message) {
   const debugBox = document.getElementById('debugBox');
   const debugContent = document.getElementById('debugContent');
@@ -870,9 +876,9 @@ function clearDebug() {
 function showAlert(title, message) {
   alert(title + '\n\n' + message);
 }
-  
-  // Complete menu data - FIXED
-  const menuData = {
+ 
+// Complete menu data - FIXED (Kept as is)
+const menuData = {
     'family-specials': [
       { name: 'Dinner for Two', price: 95.00, description: '2 Spring Rolls, Sweet & Sour Chicken Balls, Chicken Chop Suey, Pork Fried Rice' },
       { name: 'Dinner for Three', price: 150.00, description: '3 Spring Rolls, Sweet & Sour Chicken Balls, Chicken Chop Suey, Beef with Diced Vegetables, 1.5 Chicken Fried Rice' },
@@ -1033,36 +1039,36 @@ function showAlert(title, message) {
       { name: 'Snapper with Hot Garlic Sauce', price: 35.00, description: 'Hot & Spicy' }
     ]
   };
-  
-  console.log('Menu data loaded:', Object.keys(menuData).length, 'categories');
-  
-  // Phone capture
-  const urlParams = new URLSearchParams(window.location.search);
-  const phoneFromUrl = urlParams.get('phone');
-  
-  window.addEventListener('DOMContentLoaded', function() {
+ 
+console.log('Menu data loaded:', Object.keys(menuData).length, 'categories');
+ 
+// Phone capture
+const urlParams = new URLSearchParams(window.location.search);
+const phoneFromUrl = urlParams.get('phone');
+ 
+window.addEventListener('DOMContentLoaded', function() {
     console.log('Page loaded');
-    
+     
     try {
       if (phoneFromUrl) {
         const phoneInputDisplay = document.getElementById('phoneNumber');
         const phoneInputApi = document.getElementById('phoneNumberApi');
-        
+         
         if (phoneInputApi) {
           phoneInputApi.value = phoneFromUrl;
         }
-        
+         
         let displayPhone = phoneFromUrl;
         if (displayPhone.length === 11 && displayPhone.substring(0, 4) === '1246') {
           const withoutCountryCode = displayPhone.substring(1);
           displayPhone = withoutCountryCode.substring(0, 3) + '-' + 
-                         withoutCountryCode.substring(3, 6) + '-' + 
-                         withoutCountryCode.substring(6);
+                              withoutCountryCode.substring(3, 6) + '-' + 
+                              withoutCountryCode.substring(6);
         }
-        
+         
         phoneInputDisplay.value = displayPhone;
         phoneInputDisplay.style.backgroundColor = '#f0f0f0';
-        
+         
         const phoneGroup = phoneInputDisplay.closest('.form-group');
         if (phoneGroup && !phoneGroup.querySelector('.phone-note')) {
           const note = document.createElement('small');
@@ -1074,25 +1080,25 @@ function showAlert(title, message) {
           note.textContent = '✓ Verified from WhatsApp';
           phoneGroup.appendChild(note);
         }
-        
+         
         console.log('Phone number set:', phoneFromUrl);
       }
-      
+       
       // Setup category buttons
       setupCategoryButtons();
-      
+       
       // Setup back button
       document.getElementById('backBtn').addEventListener('click', function() {
         document.getElementById('menuView').classList.remove('active');
         document.getElementById('categoryGrid').style.display = 'grid';
       });
-      
+       
       // Setup cart toggle
       document.getElementById('cartToggle').addEventListener('click', function() {
         cartExpanded = !cartExpanded;
         const content = document.getElementById('cartContent');
         const arrow = document.getElementById('cartArrow');
-        
+         
         if (cartExpanded) {
           content.style.display = 'block';
           arrow.textContent = '▲';
@@ -1101,29 +1107,29 @@ function showAlert(title, message) {
           arrow.textContent = '▼';
         }
       });
-      
+       
       // Setup order type change
       document.getElementById('orderType').addEventListener('change', updateCart);
-      
+       
       console.log('All event listeners set up');
-      
+       
     } catch (error) {
       console.error('Error during setup:', error);
       showMessage('Error loading page: ' + error.message, 'error');
     }
-  });
-  
-  function setupCategoryButtons() {
+});
+ 
+function setupCategoryButtons() {
     const categoryBtns = document.querySelectorAll('.category-btn');
     console.log('Setting up', categoryBtns.length, 'category buttons');
-    
+     
     categoryBtns.forEach(btn => {
       btn.addEventListener('click', function() {
         try {
           const category = this.getAttribute('data-category');
           const icon = this.getAttribute('data-icon');
           const name = this.getAttribute('data-name');
-          
+           
           console.log('Category clicked:', category);
           showMenu(category, icon, name);
         } catch (error) {
@@ -1132,36 +1138,36 @@ function showAlert(title, message) {
         }
       });
     });
-  }
-  
-  function showMenu(category, icon, name) {
+}
+ 
+function showMenu(category, icon, name) {
     try {
       console.log('Showing menu for:', category);
-      
+       
       document.getElementById('categoryGrid').style.display = 'none';
       document.getElementById('menuView').classList.add('active');
       document.getElementById('menuIcon').textContent = icon;
       document.getElementById('menuTitle').textContent = name;
-      
+       
       const menuList = document.getElementById('menuItemsList');
       menuList.innerHTML = '';
-      
+       
       const items = menuData[category];
-      
+       
       if (!items) {
         console.error('No items found for category:', category);
         menuList.innerHTML = '<p style="padding: 20px; text-align: center; color: #666;">No items available</p>';
         return;
       }
-      
+       
       console.log('Loading', items.length, 'items');
-      
+       
       items.forEach(item => {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'menu-item';
         itemDiv.setAttribute('data-item', item.name);
         itemDiv.setAttribute('data-price', item.price);
-        
+         
         itemDiv.innerHTML = `
           <input type="checkbox" class="item-checkbox">
           <div class="item-info">
@@ -1175,9 +1181,9 @@ function showAlert(title, message) {
             <button type="button" class="qty-btn qty-plus">+</button>
           </div>
         `;
-        
+         
         menuList.appendChild(itemDiv);
-        
+         
         const checkbox = itemDiv.querySelector('.item-checkbox');
         checkbox.addEventListener('change', function() {
           if (this.checked) {
@@ -1188,7 +1194,7 @@ function showAlert(title, message) {
           }
           updateCart();
         });
-        
+         
         itemDiv.addEventListener('click', function(e) {
           if (e.target.classList.contains('qty-btn') || e.target === checkbox) {
             return;
@@ -1196,7 +1202,7 @@ function showAlert(title, message) {
           checkbox.checked = !checkbox.checked;
           checkbox.dispatchEvent(new Event('change'));
         });
-        
+         
         itemDiv.querySelector('.qty-plus').addEventListener('click', function(e) {
           e.stopPropagation();
           const display = this.previousElementSibling;
@@ -1205,7 +1211,7 @@ function showAlert(title, message) {
           display.textContent = qty;
           updateCart();
         });
-        
+         
         itemDiv.querySelector('.qty-minus').addEventListener('click', function(e) {
           e.stopPropagation();
           const display = this.nextElementSibling;
@@ -1217,54 +1223,54 @@ function showAlert(title, message) {
           }
         });
       });
-      
+       
       console.log('Menu loaded successfully');
-      
+       
     } catch (error) {
       console.error('Error in showMenu:', error);
       showMessage('Error displaying menu: ' + error.message, 'error');
     }
-  }
-  
-  function updateCart() {
+}
+ 
+function updateCart() {
     try {
       orderItems = [];
       let subtotal = 0;
-      
+       
       document.querySelectorAll('.menu-item.selected').forEach(item => {
         const name = item.getAttribute('data-item');
         const price = parseFloat(item.getAttribute('data-price'));
         const qty = parseInt(item.querySelector('.qty-display').textContent);
         const itemSubtotal = price * qty;
-        
+         
         orderItems.push({
           name: name,
           price: price,
           quantity: qty,
           subtotal: itemSubtotal
         });
-        
+         
         subtotal += itemSubtotal;
       });
-      
+       
       const cartSummary = document.getElementById('cartSummary');
       const cartItems = document.getElementById('cartItems');
       const cartTotals = document.getElementById('cartTotals');
       const submitBtn = document.getElementById('submitBtn');
       const cartCount = document.getElementById('cartCount');
       const orderType = document.getElementById('orderType').value;
-      
+       
       if (orderItems.length > 0) {
         cartSummary.classList.add('show');
         cartCount.textContent = orderItems.length;
-        
+         
         cartItems.innerHTML = orderItems.map(item => `
           <div class="cart-item">
             <span>${item.name} × ${item.quantity}</span>
             <span>$${item.subtotal.toFixed(2)}</span>
           </div>
         `).join('');
-        
+         
         let total = subtotal;
         let totalsHTML = `
           <div class="cart-subtotal">
@@ -1272,9 +1278,10 @@ function showAlert(title, message) {
             <span>$${subtotal.toFixed(2)}</span>
           </div>
         `;
-        
+         
         if (orderType === 'Delivery') {
-          const charge = subtotal * 0.10;
+          // Assuming 10% Service Charge for Delivery
+          const charge = subtotal * 0.10; 
           total = subtotal + charge;
           totalsHTML += `
             <div class="cart-charge">
@@ -1283,14 +1290,14 @@ function showAlert(title, message) {
             </div>
           `;
         }
-        
+         
         totalsHTML += `
           <div class="cart-total">
             <span>TOTAL:</span>
             <span>$${total.toFixed(2)} BBD</span>
           </div>
         `;
-        
+         
         cartTotals.innerHTML = totalsHTML;
         submitBtn.disabled = false;
       } else {
@@ -1298,104 +1305,111 @@ function showAlert(title, message) {
         cartCount.textContent = '0';
         submitBtn.disabled = true;
       }
-      
+       
     } catch (error) {
       console.error('Error updating cart:', error);
     }
-  }
-  
-  function showSuccessModal(orderNumber) {
+}
+ 
+/**
+ * Displays the success modal and handles the WhatsApp redirect.
+ * @param {string} orderNumber The confirmed order number from the server.
+ * @param {string} totalAmount The final formatted total amount.
+ */
+function showSuccessModal(orderNumber, totalAmount) {
     document.getElementById('modalOrderNumber').textContent = orderNumber;
+    document.getElementById('modalTotalAmount').textContent = totalAmount; // Assuming you add this element to your modal
     document.getElementById('successModal').classList.add('show');
     document.body.style.overflow = 'hidden';
-    
+     
     let countdown = 5;
     const countdownDisplay = document.getElementById('redirectCountdown');
     countdownDisplay.textContent = countdown;
-    
+     
+    const confirmationText = encodeURIComponent(`Hello, I just placed an order (Order #${orderNumber}) for $${totalAmount} BBD. Please confirm the details and processing time. Thank you!`);
+     
     const countdownInterval = setInterval(() => {
       countdown--;
       countdownDisplay.textContent = countdown;
-      
+       
       if (countdown <= 0) {
         clearInterval(countdownInterval);
-        window.location.href = `https://wa.me/${WHATSAPP_NUMBER}`;
+        // Redirect to WhatsApp with confirmation message
+        window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${confirmationText}`;
       }
     }, 1000);
-  }
-  
-  document.getElementById('orderForm').addEventListener('submit', async function(e) {
+}
+ 
+document.getElementById('orderForm').addEventListener('submit', async function(e) {
     e.preventDefault();
-    
+     
     try {
+      if (!APPS_SCRIPT_URL || !WHATSAPP_NUMBER) {
+        throw new Error('APPS_SCRIPT_URL or WHATSAPP_NUMBER is not defined in the script.');
+      }
+       
       if (orderItems.length === 0) {
         showMessage('Please select at least one item', 'error');
         return;
       }
-      
+       
       const customerName = document.getElementById('customerName').value.trim();
-      const phoneInputApi = document.getElementById('phoneNumberApi');
+      // Use phoneNumberApi if available (from URL), otherwise fall back to display input
+      const phoneInputApi = document.getElementById('phoneNumberApi'); 
       const phoneNumber = phoneInputApi ? phoneInputApi.value.trim() : document.getElementById('phoneNumber').value.trim();
       const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
       const orderType = document.getElementById('orderType').value;
       const specialInstructions = document.getElementById('specialInstructions').value.trim();
-      
-      if (!orderType) {
-        showMessage('Please select order type', 'error');
+       
+      if (!orderType || !customerName || !phoneNumber || (orderType === 'Delivery' && !deliveryAddress)) {
+        showMessage('Please fill in all required fields (Name, Phone, Address for Delivery)', 'error');
         return;
       }
-      
-      if (!phoneNumber) {
-        showMessage('Phone number is missing', 'error');
-        return;
-      }
-      
+       
       let subtotal = orderItems.reduce((sum, item) => sum + item.subtotal, 0);
       let total = orderType === 'Delivery' ? subtotal * 1.10 : subtotal;
-      
+       
+      // Format items string for Google Sheet
       const orderDetails = orderItems.map(item => 
-        `${item.name} x${item.quantity} = $${item.subtotal.toFixed(2)}`
-      ).join('\n');
-      
-      const totalAmount = '$' + total.toFixed(2) + ' BBD';
-      
+        `${item.quantity}x ${item.name} ($${item.subtotal.toFixed(2)})`
+      ).join(' | ');
+       
+      const totalAmount = total.toFixed(2); // Send just the number for easier processing/formatting in Apps Script/Sheet
+      const displayTotalAmount = '$' + totalAmount + ' BBD';
+       
       document.getElementById('loading').style.display = 'block';
       const submitBtn = document.getElementById('submitBtn');
       submitBtn.disabled = true;
       submitBtn.textContent = 'Submitting...';
-      
-      const orderData = {
+       
+      // --- FIX: Use URLSearchParams for GET submission ---
+      const params = new URLSearchParams({
         customerName: customerName,
         phoneNumber: phoneNumber,
         deliveryAddress: deliveryAddress,
         orderType: orderType,
         orderItems: orderDetails,
-        totalAmount: totalAmount,
+        totalAmount: totalAmount, // Pass as numerical string
         specialInstructions: specialInstructions || 'None'
-      };
-      
-      console.log('Submitting order:', orderData);
-      
-      // Build query string
-const params = new URLSearchParams({
-  customerName,
-  phoneNumber,
-  deliveryAddress,
-  orderType,
-  orderItems: orderDetails,
-  totalAmount,
-  specialInstructions: specialInstructions || 'None'
-});
-      
+      });
+       
+      const url = `${APPS_SCRIPT_URL}?${params.toString()}`;
+      console.log('Fetching GET URL:', url);
+       
+      // Use fetch to execute the doGet function
+      const response = await fetch(url); 
       const result = await response.json();
-      
+      // --- END FIX ---
+       
       console.log('Response:', result);
-      
+       
       document.getElementById('loading').style.display = 'none';
-      
+       
       if (result.success) {
-        showSuccessModal(result.orderNumber);
-        
+        // Pass the total amount to the modal function for the WhatsApp message
+        showSuccessModal(result.orderNumber, displayTotalAmount); 
+         
+        // Reset form and cart state
         document.getElementById('orderForm').reset();
         document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
         document.getElementById('menuView').classList.remove('active');
@@ -1403,11 +1417,11 @@ const params = new URLSearchParams({
         orderItems = [];
         updateCart();
       } else {
-        showMessage('✗ ' + result.message, 'error');
+        showMessage('✗ Submission failed: ' + result.message, 'error');
         submitBtn.textContent = 'Submit Order';
         submitBtn.disabled = false;
       }
-      
+       
     } catch (error) {
       console.error('Submission error:', error);
       document.getElementById('loading').style.display = 'none';
@@ -1416,65 +1430,26 @@ const params = new URLSearchParams({
       submitBtn.disabled = false;
       showMessage('✗ Error: ' + error.message, 'error');
     }
-  });
-  
-  function showMessage(text, type) {
+});
+ 
+function showMessage(text, type) {
     const msg = document.getElementById('message');
     msg.textContent = text;
     msg.className = 'message ' + type;
     msg.style.display = 'block';
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    
+     
     setTimeout(() => msg.style.display = 'none', 8000);
-  }
-  
-  // Global error handler
-  window.addEventListener('error', function(e) {
+}
+ 
+// Global error handler
+window.addEventListener('error', function(e) {
     console.error('Global error:', e.error);
-    showMessage('An error occurred. Please refresh the page.', 'error');
-  });
-  
-  console.log('Script loaded successfully');
-</script>
-```
+    // showMessage('An error occurred. Please refresh the page.', 'error');
+});
+ 
+console.log('Script loaded successfully');
 
----
-
-## **What This Fixed:**
-
-1. ✅ **Removed emoji from code** (was causing string errors)
-2. ✅ **Added console.log debugging** throughout
-3. ✅ **Added try-catch blocks** everywhere
-4. ✅ **Global error handler** to catch any missed errors
-5. ✅ **Better error messages** to user
-6. ✅ **Fixed apostrophes** in item names (escaped properly)
-
----
-
-## **How to Debug:**
-
-1. **Open the page**
-2. **Press F12** (Developer Tools)
-3. **Go to Console tab**
-4. **Look for errors** - you should see:
-```
-   Script loaded successfully
-   Menu data loaded: 15 categories
-   Page loaded
-   Setting up 15 category buttons
-```
-
-5. **Try clicking a category** - should see:
-```
-   Category clicked: appetizers
-   Showing menu for: appetizers
-   Loading 17 items
-   Menu loaded successfully
-  
-  </script>
-</body>
-
-</html>
 
 
 
