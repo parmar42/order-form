@@ -934,7 +934,6 @@
   </div>
 
   <!-- Success Modal -->
-  <!-- Success Modal -->
 <div id="successModal" class="success-modal">
   <div class="success-modal-content">
     <div class="success-checkmark">✓</div>
@@ -1155,10 +1154,7 @@ function redirectToWhatsApp(orderNumber, orderDetails, totalAmount) {
     `Thank you for your order! We'll contact you shortly.`
   );
   
-  // Redirect to WhatsApp
-  window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
-}
-    // Send order confirmation trigger to Make.com
+      // Send order confirmation trigger to Make.com
     fetch(MAKE_WEBHOOK, {
       method: 'POST',
       headers: {
