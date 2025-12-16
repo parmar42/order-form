@@ -483,7 +483,7 @@
           <div class="form-group">
             <label for="phoneNumber">Phone Number <span class="required">*</span></label>
             <input type="tel" id="phoneNumber" required placeholder="246-XXX-XXXX">
-            <input type="hidden" name="whatsappNumber" value="USER_NUMBER_HERE">
+            <input type="hidden" name="whatsappNumber" value="userPhone">
           </div>
           
           <div class="form-group">
@@ -1069,6 +1069,7 @@
       
       const customerName = document.getElementById('customerName').value.trim();
       const phoneNumber = document.getElementById('phoneNumber').value.trim();
+      const userPhone = document.getElemenyBId('userPhone).value.trim();
       const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
       const orderType = document.getElementById('orderType').value;
       const specialInstructions = document.getElementById('specialInstructions').value.trim();
@@ -1097,6 +1098,7 @@
       const params = new URLSearchParams({
         customerName: customerName,
         phoneNumber: phoneNumber,
+        phone: userPhone,
         deliveryAddress: deliveryAddress,
         orderType: orderType,
         orderItems: orderDetails,
@@ -1181,6 +1183,7 @@
   </script>
 </body>
 </html>
+
 
 
 
