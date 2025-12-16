@@ -957,6 +957,7 @@
       
       const customerName = document.getElementById('customerName').value.trim();
       const phoneNumber = document.getElementById('phoneNumber').value.trim();
+      const whatsappNumber = document.getElementById('whatsappNumber').value.trim();
       const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
       const orderType = document.getElementById('orderType').value;
       const specialInstructions = document.getElementById('specialInstructions').value.trim();
@@ -985,6 +986,7 @@
       const params = new URLSearchParams({
         customerName: customerName,
         phoneNumber: phoneNumber,
+        whatsappNumber: whatsappNumber,
         deliveryAddress: deliveryAddress,
         orderType: orderType,
         orderItems: orderDetails,
@@ -1076,4 +1078,5 @@
   </script>
 </body>
 </html>
+
 
