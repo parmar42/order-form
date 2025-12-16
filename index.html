@@ -6,6 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <title>East Moon Restaurant - Order Online</title>
   <style>
+    /* ... (Your existing CSS styles remain here) ... */
     * {
       margin: 0;
       padding: 0;
@@ -537,24 +538,24 @@
         <div class="form-section">
           <div class="section-title">📋 Your Information</div>
           
-          <div class="form-group">
+          <input type="hidden" id="waNumberFromURL" name="waNumberFromURL"> <div class="form-group">
             <label for="customerName">Full Name <span class="required">*</span></label>
-            <input type="text" id="customerName" required placeholder="John Doe">
+            <input type="text" id="customerName" name="customerName" required placeholder="John Doe">
           </div>
           
           <div class="form-group">
             <label for="phoneNumber">Phone Number <span class="required">*</span></label>
-            <input type="tel" id="phoneNumber" required placeholder="246-XXX-XXXX">
+            <input type="tel" id="phoneNumber" name="phoneNumber" required placeholder="246-XXX-XXXX">
           </div>
           
           <div class="form-group">
             <label for="deliveryAddress">Delivery Address <span class="required">*</span></label>
-            <textarea id="deliveryAddress" required placeholder="Street, parish, landmarks"></textarea>
+            <textarea id="deliveryAddress" name="deliveryAddress" required placeholder="Street, parish, landmarks"></textarea>
           </div>
           
           <div class="form-group">
             <label for="orderType">Order Type <span class="required">*</span></label>
-            <select id="orderType" required>
+            <select id="orderType" name="orderType" required>
               <option value="">-- Select --</option>
               <option value="Delivery">🚗 Delivery (10% service charge)</option>
               <option value="Takeout">🥡 Takeout</option>
@@ -916,7 +917,6 @@
             </div>
           </div>
         </div>
-        
         <div class="order-summary" id="orderSummary" style="display:none;">
           <h4>📋 Your Order</h4>
           <div id="summaryItems"></div>
@@ -926,7 +926,7 @@
         <div class="form-section">
           <div class="section-title">📝 Special Instructions</div>
           <div class="form-group">
-            <textarea id="specialInstructions" placeholder="Optional - any special requests or dietary restrictions"></textarea>
+            <textarea id="specialInstructions" name="specialInstructions" placeholder="Optional - any special requests or dietary restrictions"></textarea>
           </div>
         </div>
         
@@ -935,7 +935,6 @@
     </div>
   </div>
 
-  <!-- Success Modal -->
   <div id="successModal" class="success-modal">
     <div class="success-modal-content">
       <div class="success-checkmark">✓</div>
@@ -959,7 +958,6 @@
         <strong>Payment:</strong> Cash only on delivery or pickup.
       </p>
       
-      <!-- Countdown Display -->
       <div class="countdown-box">
         <p>Redirecting to WhatsApp in</p>
         <span id="redirectCountdown" class="countdown-number">5</span>
@@ -973,13 +971,36 @@
 
   <script>
     // ⚠️ IMPORTANT: REPLACE THESE VALUES
-    const SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID_HERE/exec';
-    const BOTPRESS_WEBHOOK = 'YOUR_BOTPRESS_WEBHOOK_URL'; // e.g., https://webhook.botpress.cloud/YOUR_BOT_ID
-    const WHATSAPP_NUMBER = '1246XXXXXXX'; // Your restaurant's WhatsApp number
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyGc3g4jdYWAckG-ZXmBzTI0DmYqvBAIyQ4bLnc3DbujzDa62ySmwFy7RMpoqQ-2tYqTg/exec'; // Your Google Apps Script Web App URL
+    const BOTPRESS_WEBHOOK = 'YOUR_BOTPRESS_WEBHOOK_URL'; // e.g., https://webhook.botpress.cloud/YOUR_BOT_ID (Used for proactive message)
+    const WHATSAPP_NUMBER = '12462367556'; // Your restaurant's WhatsApp number (Used for redirect link)
     
     let orderItems = [];
+    let customerWaNumber = ''; // Variable to hold the WA number from the URL
     
-    // Category toggle
+    // --- 1. URL Parameter Retrieval ---
+    // Function to get the WhatsApp number from the URL
+    function getParameterByName(name, url = window.location.href) {
+        name = name.replace(/[\[\]]/g, '\\$&');
+        const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
+
+    // Check for the 'wa_number' parameter on page load (assuming Botpress uses 'wa_number')
+    customerWaNumber = getParameterByName('wa_number'); 
+    if (customerWaNumber) {
+        // Populate the new hidden field
+        document.getElementById('waNumberFromURL').value = customerWaNumber.replace(/[^0-9]/g, ''); // Clean the number
+        console.log('Customer WA Number from URL:', customerWaNumber);
+    } else {
+        console.warn('Customer WA Number parameter (wa_number) not found in URL.');
+    }
+    // ----------------------------------
+    
+    // Category toggle (KEEP EXISTING LOGIC)
     document.querySelectorAll('.category-header').forEach(header => {
       header.addEventListener('click', function() {
         const targetId = this.getAttribute('data-target');
@@ -996,7 +1017,7 @@
       });
     });
     
-    // Menu item selection
+    // Menu item selection (KEEP EXISTING LOGIC)
     document.querySelectorAll('.menu-item').forEach(item => {
       const checkbox = item.querySelector('.item-checkbox');
       
@@ -1019,7 +1040,7 @@
       });
     });
     
-    // Quantity controls
+    // Quantity controls (KEEP EXISTING LOGIC)
     document.querySelectorAll('.qty-plus').forEach(btn => {
       btn.addEventListener('click', function(e) {
         e.stopPropagation();
@@ -1047,6 +1068,7 @@
     document.getElementById('orderType').addEventListener('change', updateOrder);
     
     function updateOrder() {
+      // (KEEP EXISTING LOGIC)
       orderItems = [];
       let subtotal = 0;
       
@@ -1116,7 +1138,7 @@
       }
     }
     
-    // Success Modal Functions with Botpress Integration
+    // Success Modal Functions with Botpress Integration (SLIGHTLY MODIFIED)
     function showSuccessModal(orderNumber, orderDetails, totalAmount, customerData) {
       document.getElementById('modalOrderNumber').textContent = orderNumber;
       document.getElementById('successModal').classList.add('show');
@@ -1135,68 +1157,33 @@
           
           if (countdown <= 0) {
             clearInterval(countdownInterval);
-            sendToBotpressAndRedirect(orderNumber, orderDetails, totalAmount, customerData);
+            // customerData.phoneNumber now holds the WA number from the URL
+            // sendToBotpressAndRedirect(orderNumber, orderDetails, totalAmount, customerData); 
+            // Note: Since Make.com handles the confirmation message, you can remove the direct Botpress webhook call here.
+            
+            // Redirect immediately to WhatsApp
+            window.location.href = `https://wa.me/${WHATSAPP_NUMBER}`;
           }
         }, 1000);
       }
     }
     
-    function sendToBotpressAndRedirect(orderNumber, orderDetails, totalAmount, customerData) {
-      // Format order message
-      const formattedMessage = `✅ Order Confirmed!\n\nOrder #${orderNumber}\n\n${orderDetails}\n\nTotal: ${totalAmount}\n\nThank you for your order! We'll prepare it and contact you shortly.\n\n- East Moon Restaurant 🥡`;
-      
-      // Send to Botpress webhook
-      fetch(BOTPRESS_WEBHOOK, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          type: 'text',
-          text: formattedMessage,
-          userId: customerData.phoneNumber.replace(/[^0-9]/g, ''), // Clean phone number
-          channel: 'whatsapp',
-          conversationId: customerData.phoneNumber.replace(/[^0-9]/g, ''),
-          eventType: 'proactive',
-          payload: {
-            orderNumber: orderNumber,
-            customerName: customerData.customerName,
-            phoneNumber: customerData.phoneNumber,
-            deliveryAddress: customerData.deliveryAddress,
-            orderType: customerData.orderType,
-            orderDetails: orderDetails,
-            totalAmount: totalAmount,
-            timestamp: new Date().toISOString()
-          }
-        })
-      })
-      .then(response => {
-        console.log('Order confirmation sent to Botpress');
-        return response.json();
-      })
-      .then(data => {
-        console.log('Botpress response:', data);
-      })
-      .catch(error => {
-        console.error('Error sending to Botpress:', error);
-      })
-      .finally(() => {
-        // Redirect to WhatsApp regardless of webhook result
-        window.location.href = `https://wa.me/${WHATSAPP_NUMBER}`;
-      });
-    }
+    // Removed sendToBotpressAndRedirect function, as Make.com handles the message.
     
-    // Form submission
+    // --- MODIFIED FORM SUBMISSION TO USE doPost (POST METHOD) ---
     document.getElementById('orderForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
+      // Client-side validation
       if (orderItems.length === 0) {
         showMessage('Please select at least one item', 'error');
         return;
       }
       
+      // 1. Collect all data
       const customerName = document.getElementById('customerName').value.trim();
-      const phoneNumber = document.getElementById('phoneNumber').value.trim();
+      const clientPhoneNumber = document.getElementById('phoneNumber').value.trim(); // User's typed number
+      const waNumberFromURL = document.getElementById('waNumberFromURL').value.trim(); // Number from URL (for Botpress/Make)
       const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
       const orderType = document.getElementById('orderType').value;
       const specialInstructions = document.getElementById('specialInstructions').value.trim();
@@ -1206,6 +1193,7 @@
         return;
       }
       
+      // Calculate totals and format order details
       let subtotal = orderItems.reduce((sum, item) => sum + item.subtotal, 0);
       let total = orderType === 'Delivery' ? subtotal * 1.10 : subtotal;
       
@@ -1215,40 +1203,42 @@
       
       const totalAmount = '$' + total.toFixed(2) + ' BBD';
       
-      // Show loading
+      // Show loading state
       document.getElementById('loading').style.display = 'block';
       const submitBtn = document.getElementById('submitBtn');
       submitBtn.disabled = true;
       submitBtn.textContent = 'Submitting...';
       
-      // Build URL with parameters
-      const params = new URLSearchParams({
-        customerName: customerName,
-        phoneNumber: phoneNumber,
-        deliveryAddress: deliveryAddress,
-        orderType: orderType,
-        orderItems: orderDetails,
-        totalAmount: totalAmount,
-        specialInstructions: specialInstructions || 'None'
-      });
+      // 2. Prepare data for POST request using FormData
+      const formData = new FormData();
+      formData.append('customerName', customerName);
+      formData.append('phoneNumber', clientPhoneNumber);
+      formData.append('waNumberFromURL', waNumberFromURL); // The critical number for Make/Botpress
+      formData.append('deliveryAddress', deliveryAddress);
+      formData.append('orderType', orderType);
+      formData.append('orderItems', orderDetails); // Formatted string
+      formData.append('totalAmount', totalAmount);
+      formData.append('specialInstructions', specialInstructions || 'None');
       
-      const url = SCRIPT_URL + '?' + params.toString();
-      
+      // 3. Send POST request to Apps Script
       try {
-        const response = await fetch(url, {
-          method: 'GET',
-          redirect: 'follow'
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST', // Sends a POST request
+          body: formData // Sends data as standard form encoding
         });
         
-        const result = await response.json();
+        // Handle response
+        const responseText = await response.text();
+        const result = JSON.parse(responseText);
         
         document.getElementById('loading').style.display = 'none';
         
         if (result.success) {
-          // Show success modal with customer data for Botpress
+          // Show success modal, passing the WA number from URL for redirect
           const customerData = {
             customerName,
-            phoneNumber,
+            // Use waNumberFromURL here, as this is the number that came from Botpress
+            phoneNumber: waNumberFromURL, 
             deliveryAddress,
             orderType
           };
@@ -1261,7 +1251,7 @@
           document.querySelectorAll('.menu-items').forEach(el => el.classList.remove('show'));
           document.querySelectorAll('.category-header').forEach(el => el.classList.remove('active'));
           orderItems = [];
-          updateOrder();
+          updateOrder(); // Recalculate summary (should be empty)
           
           submitBtn.textContent = 'Submit Order';
           submitBtn.disabled = false;
@@ -1272,13 +1262,14 @@
         }
         
       } catch (error) {
-        console.error('Error:', error);
+        console.error('Fetch Error:', error);
         document.getElementById('loading').style.display = 'none';
         submitBtn.textContent = 'Submit Order';
         submitBtn.disabled = false;
-        showMessage('✗ Error submitting order. Please try again.', 'error');
+        showMessage('✗ Network Error submitting order. Please try again.', 'error');
       }
     });
+    // -------------------------------------------------------------
     
     function showMessage(text, type) {
       const msg = document.getElementById('message');
