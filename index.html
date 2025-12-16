@@ -401,6 +401,7 @@
       
       <form id="orderForm" method="post" action="https://script.google.com/macros/s/AKfycbyGc3g4jdYWAckG-ZXmBzTI0DmYqvBAIyQ4bLnc3DbujzDa62ySmwFy7RMpoqQ-2tYqTg/exec">
         <div class="form-section">
+          <input type="hidden" id="whatsappNumberInput" name="whatsappNumber" value="">
           <div class="section-title">📋 Your Information</div>
           <div class="form-group">
             <label for="customerName">Full Name <span class="required">*</span></label>
@@ -410,7 +411,6 @@
           <div class="form-group">
             <label for="phoneNumber">Phone Number <span class="required">*</span></label>
             <input type="tel" id="phoneNumber" required placeholder="246-XXX-XXXX">
-            <input type="hidden" name="whatsappNumber" value="">
           </div>
           
           <div class="form-group">
@@ -957,7 +957,7 @@
       
       const customerName = document.getElementById('customerName').value.trim();
       const phoneNumber = document.getElementById('phoneNumber').value.trim();
-      const whatsappNumber = document.getElementById('whatsappNumber').value.trim();
+      const whatsappNumberInput = document.getElementById('whatsappNumberInput').value.trim();
       const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
       const orderType = document.getElementById('orderType').value;
       const specialInstructions = document.getElementById('specialInstructions').value.trim();
@@ -986,7 +986,7 @@
       const params = new URLSearchParams({
         customerName: customerName,
         phoneNumber: phoneNumber,
-        whatsappNumber: whatsappNumber,
+        whatsappNumberInput: whatsappNumberInput,
         deliveryAddress: deliveryAddress,
         orderType: orderType,
         orderItems: orderDetails,
@@ -1044,39 +1044,12 @@
       setTimeout(() => msg.style.display = 'none', 8000);
     }
 
-      document.addEventListener('DOMContentLoaded', () => {
-    // 1. Define the input element and the URL parameter name
-    const inputField = document.getElementById('whatsappNumberInput');
-    
-    // Check if the input field actually exists before proceeding
-    if (!inputField) {
-        console.error("HTML Error: Could not find the hidden input field with ID 'whatsappNumberInput'.");
-        return;
-    }
-
-    // 2. Capture the URL parameter
-    const params = new URLSearchParams(window.location.search);
-    const rawNumber = params.get('whatsappNumber'); // <--- This must match your URL exactly!
-
-    // 3. Process and store the number
-    if (rawNumber) {
-        // Optional: Data Cleaning (Strips out dashes, spaces, etc., to ensure a clean number)
-        const cleanNumber = rawNumber.replace(/\D/g, '').trim(); 
-        
-        // Store the cleaned number in the hidden input field
-        inputField.value = cleanNumber;
-        
-        console.log("Successfully captured and stored WhatsApp Number:", cleanNumber);
-        
-    } else {
-        console.warn("No 'whatsappNumber' parameter found in the URL.");
-    }
-});
-
+   
 
     
   </script>
 </body>
 </html>
+
 
 
