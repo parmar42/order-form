@@ -411,7 +411,6 @@
           <div class="form-group">
             <label for="phoneNumber">Phone Number <span class="required">*</span></label>
             <input type="tel" id="phoneNumber" required placeholder="246-XXX-XXXX">
-            <input type="hidden" name="whatsappNumber" value="USER_NUMBER_HERE">
           </div>
           
           <div class="form-group">
@@ -803,87 +802,63 @@
   </div>
 
   <script>
+<script>
 /* ============================
-   CONFIGURATION
+   CONFIG
 ============================ */
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyGc3g4jdYWAckG-ZXmBzTI0DmYqvBAIyQ4bLnc3DbujzDa62ySmwFy7RMpoqQ-2tYqTg/exec';
-const params = new URLSearchParams(window.location.search);
-const whatsappNumber = params.get('whatsappNumber');
 
-    
+/* ============================
+   GLOBAL STATE
+============================ */
 let orderItems = [];
 let summaryExpanded = true;
 
-
-  if (whatsappNumber) {
-    // Store RAW WhatsApp number exactly as received
-    document.getElementById('whatsappNumber').value =
-      whatsappNumber.replace(/\D/g, '');
-
-    console.log('WhatsApp number captured:', whatsappNumber);
-  }
-
- 
 /* ============================
-   ORDER LOGIC (UNCHANGED)
+   CAPTURE WHATSAPP NUMBER
 ============================ */
-// (ALL your menu, quantity, summary, and UI logic stays EXACTLY the same)
-// Nothing removed here for safety
+const params = new URLSearchParams(window.location.search);
+const whatsappNumber = params.get('whatsappNumber');
 
-/* ============================
-   SUCCESS MODAL
-============================ */
-function showSuccessModal(orderNumber) {
-  document.getElementById('modalOrderNumber').textContent = orderNumber;
-  document.getElementById('successModal').classList.add('show');
-
-  let countdown = 5;
-  const timer = setInterval(() => {
-    document.getElementById('redirectCountdown').textContent = countdown;
-    countdown--;
-    if (countdown < 0) {
-      clearInterval(timer);
-      window.location.href = `https://wa.me/${WHATSAPP_NUMBER}`;
-    }
-  }, 1000);
+if (whatsappNumber) {
+  document.getElementById('whatsappNumber').value =
+    whatsappNumber.replace(/\D/g, '');
 }
 
 /* ============================
-   FORM SUBMISSION (POST)
+   FORM SUBMIT
 ============================ */
-const body = new URLSearchParams({
-  customerName,
-  phoneNumber, // user typed
-  whatsappNumber: document.getElementById('whatsappNumber').value,
-  deliveryAddress,
-  orderType,
-  orderItems,
-  totalAmount,
-  notes
-});
+const form = document.getElementById('orderForm');
 
-await fetch(SCRIPT_URL, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-  body
-});
-
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
 
   document.getElementById('loading').style.display = 'block';
+
+  const body = new URLSearchParams({
+    customerName: document.getElementById('customerName').value,
+    phoneNumber: document.getElementById('phoneNumber').value, // user typed
+    whatsappNumber: document.getElementById('whatsappNumber').value, // Botpress
+    deliveryAddress: document.getElementById('deliveryAddress').value,
+    orderType: document.getElementById('orderType').value,
+    orderItems: JSON.stringify(orderItems),
+    totalAmount: calculateTotal(), // assumes you already have this
+    notes: document.getElementById('specialInstructions').value || ''
+  });
 
   try {
     const res = await fetch(SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: params.toString()
+      body
     });
 
     const data = await res.json();
     document.getElementById('loading').style.display = 'none';
 
     if (data.success) {
-      showSuccessModal(data.orderNumber);
-      document.getElementById('orderForm').reset();
+      alert(`Order submitted! Order #${data.orderNumber}`);
+      form.reset();
       orderItems = [];
     } else {
       alert(data.message || 'Submission failed');
