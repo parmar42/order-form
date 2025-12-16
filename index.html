@@ -913,12 +913,31 @@
     // ⚠️ IMPORTANT: REPLACE THIS WITH YOUR ACTUAL APPS SCRIPT URL
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyGc3g4jdYWAckG-ZXmBzTI0DmYqvBAIyQ4bLnc3DbujzDa62ySmwFy7RMpoqQ-2tYqTg/exec';
     
-    // ✅ Capture WhatsApp number from URL (?whatsapp=whatsapp:+1246...)
-  const params = new URLSearchParams(window.location.search);
-  const whatsapp = params.get('whatsapp');
-  if (whatsapp) {
-    document.getElementById('whatsapp').value = whatsapp;
-  }
+    // ✅ Capture WhatsApp number from URL (?whatsapp=whatsapp:+1246...)?phone={{event.tags.conversation['whatsapp:userPhone']}}
+ function getPhoneNumberFromUrl() {
+  // 1. Get the full query string part of the URL (e.g., "?phoneNumber=...&orderType=...")
+  const queryString = window.location.search;
+
+  // 2. Create a URLSearchParams object to easily parse the parameters
+  const params = new URLSearchParams(queryString);
+
+  // 3. Get the value of the 'phoneNumber' parameter
+  const phone = params.get('phone');
+
+  // 4. Return the phone number (or null if it wasn't in the URL)
+  return phoneNumber;
+}
+
+// Example usage:
+const capturedPhone = getPhoneNumberFromUrl();
+
+if (capturedPhone) {
+  console.log("Phone number found:", capturedPhone);
+  // You would typically use this value to pre-fill an HTML input field
+  // document.getElementById('phoneNumberInput').value = capturedPhone;
+} else {
+  console.log("No phone number found in URL.");
+}
     let orderItems = [];
     
     // Category toggle
@@ -1183,6 +1202,7 @@
   </script>
 </body>
 </html>
+
 
 
 
