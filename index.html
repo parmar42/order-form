@@ -1143,6 +1143,31 @@
         showMessage('✗ Error submitting order. Please try again.', 'error');
       }
     });
+
+       // Success Modal Functions with Botpress Integration
+    function showSuccessModal(orderNumber, orderDetails, totalAmount, customerData) {
+      document.getElementById('modalOrderNumber').textContent = orderNumber;
+      document.getElementById('successModal').classList.add('show');
+      document.body.style.overflow = 'hidden';
+      
+      // Auto-redirect after 5 seconds
+      let countdown = 5;
+      const countdownDisplay = document.getElementById('redirectCountdown');
+      
+      if (countdownDisplay) {
+        countdownDisplay.textContent = countdown;
+        
+        const countdownInterval = setInterval(() => {
+          countdown--;
+          countdownDisplay.textContent = countdown;
+          
+          if (countdown <= 0) {
+            clearInterval(countdownInterval);
+            sendToBotpressAndRedirect(orderNumber, orderDetails, totalAmount, customerData);
+          }
+        }, 1000);
+      }
+    }
     
     function showMessage(text, type) {
       const msg = document.getElementById('message');
@@ -1156,5 +1181,6 @@
   </script>
 </body>
 </html>
+
 
 
