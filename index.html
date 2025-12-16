@@ -359,78 +359,6 @@
       100% { transform: rotate(360deg); }
     }
     
-        .success-modal h2 {
-      color: #28a745;
-      margin-bottom: 15px;
-      font-size: 28px;
-    }
-    
-    .success-modal .order-number {
-      background: #f8f9fa;
-      padding: 15px;
-      border-radius: 8px;
-      margin: 20px 0;
-      border-left: 4px solid #DC143C;
-    }
-    
-    .success-modal .order-number span {
-      color: #666;
-      font-size: 14px;
-    }
-    
-    .success-modal .order-number strong {
-      color: #8B0000;
-      font-size: 24px;
-      display: block;
-      margin-top: 5px;
-      letter-spacing: 1px;
-    }
-    
-    .success-modal .info-box {
-      background: #fff3cd;
-      border: 1px solid #ffc107;
-      border-radius: 8px;
-      padding: 15px;
-      margin: 20px 0;
-      color: #856404;
-      text-align: left;
-    }
-    
-    .success-modal .info-box strong {
-      display: block;
-      margin-bottom: 5px;
-      font-size: 16px;
-    }
-    
-    .success-modal p {
-      color: #666;
-      line-height: 1.6;
-      margin: 15px 0;
-    }
-    
-    .countdown-box {
-      margin: 30px 0;
-      padding: 20px;
-      background: #e3f2fd;
-      border-radius: 10px;
-      border-left: 4px solid #2196F3;
-    }
-    
-    .countdown-box p {
-      color: #1976d2;
-      margin: 0;
-      font-size: 18px;
-      font-weight: 600;
-    }
-    
-    .countdown-number {
-      font-size: 48px;
-      font-weight: bold;
-      color: #DC143C;
-      display: block;
-      margin: 10px 0;
-    }
-    
     @media (min-width: 600px) {
       .header h1 {
         font-size: 32px;
@@ -455,7 +383,6 @@
         padding: 30px;
       }
     }
-    
   </style>
 </head>
 <body>
@@ -472,7 +399,7 @@
         <p>Submitting your order...</p>
       </div>
       
-      <form id="orderForm" method="post" action="YOUR_URL_HERE">
+      <form id="orderForm" method="post" action="https://script.google.com/macros/s/AKfycbyGc3g4jdYWAckG-ZXmBzTI0DmYqvBAIyQ4bLnc3DbujzDa62ySmwFy7RMpoqQ-2tYqTg/exec">
         <div class="form-section">
           <div class="section-title">📋 Your Information</div>
           <div class="form-group">
@@ -483,7 +410,7 @@
           <div class="form-group">
             <label for="phoneNumber">Phone Number <span class="required">*</span></label>
             <input type="tel" id="phoneNumber" required placeholder="246-XXX-XXXX">
-            <input type="hidden" name="whatsappNumberInput" value="whatsappNumber">
+            <input type="hidden" name="whatsappNumber" value="">
           </div>
           
           <div class="form-group">
@@ -872,55 +799,32 @@
         <button type="submit" class="submit-btn" id="submitBtn" disabled>Submit Order</button>
       </form>
     </div>
-
-        <!-- Success Modal -->
-          <div id="successModal" class="success-modal">
-    <div class="success-modal-content">
-      <div class="success-checkmark">✓</div>
-      <h2>Order Confirmed! 🎉</h2>
-      
-      <div class="order-number">
-        <span>Your Order Number:</span>
-        <strong id="modalOrderNumber">EM12121234</strong>
-      </div>
-      
-      <p>
-        Thank you for your order! We've received it and you'll receive a WhatsApp confirmation shortly.
-      </p>
-      
-      <div class="info-box">
-        <strong>📱 Check Your WhatsApp!</strong>
-        You'll receive your order confirmation via WhatsApp in a few moments.
-      </div>
-      
-      <p style="font-size: 14px; margin-top: 15px;">
-        <strong>Payment:</strong> Cash only on delivery or pickup.
-      </p>
-      
-      <!-- Countdown Display -->
-      <div class="countdown-box">
-        <p>Redirecting to WhatsApp in</p>
-        <span id="redirectCountdown" class="countdown-number">5</span>
-      </div>
-      
-      <p style="font-size: 13px; color: #999; text-align: center; margin-top: 10px;">
-        Please wait while we open WhatsApp...
-      </p>
-   
   </div>
 
   <script>
     // ⚠️ IMPORTANT: REPLACE THIS WITH YOUR ACTUAL APPS SCRIPT URL
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyGc3g4jdYWAckG-ZXmBzTI0DmYqvBAIyQ4bLnc3DbujzDa62ySmwFy7RMpoqQ-2tYqTg/exec';
     
-    // ✅ Capture WhatsApp number from URL (?whatsapp=whatsapp:+1246...)?phone={{event.tags.conversation['whatsapp:userPhone']}}
-    const params = new URLSearchParams(window.location.search)
-                const whatsappPhone = params.get('whatsappNumber')
-
-                if (whatsappNumber) {
-                  document.getElementById('whatsappNumber').value = whatsappNumber
-   }
-
+    // ✅ Capture WhatsApp number from URL (?whatsapp=whatsapp:+1246...)
+ 
+    let orderItems = [];
+    
+    // Category toggle
+    document.querySelectorAll('.category-header').forEach(header => {
+      header.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-target');
+        const target = document.getElementById(targetId);
+        const isShown = target.classList.contains('show');
+        
+        document.querySelectorAll('.menu-items').forEach(items => items.classList.remove('show'));
+        document.querySelectorAll('.category-header').forEach(h => h.classList.remove('active'));
+        
+        if (!isShown) {
+          target.classList.add('show');
+          this.classList.add('active');
+        }
+      });
+    });
     
     // Menu item selection
     document.querySelectorAll('.menu-item').forEach(item => {
@@ -1053,7 +957,6 @@
       
       const customerName = document.getElementById('customerName').value.trim();
       const phoneNumber = document.getElementById('phoneNumber').value.trim();
-      const userPhone = document.getElemenyBId('userPhone).value.trim();
       const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
       const orderType = document.getElementById('orderType').value;
       const specialInstructions = document.getElementById('specialInstructions').value.trim();
@@ -1082,7 +985,6 @@
       const params = new URLSearchParams({
         customerName: customerName,
         phoneNumber: phoneNumber,
-        whatsappNumber: whatsappNumber,
         deliveryAddress: deliveryAddress,
         orderType: orderType,
         orderItems: orderDetails,
@@ -1129,8 +1031,7 @@
         showMessage('✗ Error submitting order. Please try again.', 'error');
       }
     });
-
-          
+    
     function showMessage(text, type) {
       const msg = document.getElementById('message');
       msg.textContent = text;
@@ -1140,72 +1041,6 @@
       
       setTimeout(() => msg.style.display = 'none', 8000);
     }
-
-     // Success Modal Functions with Botpress Integration
-    function showSuccessModal(orderNumber, orderDetails, totalAmount, customerData) {
-      document.getElementById('modalOrderNumber').textContent = orderNumber;
-      document.getElementById('successModal').classList.add('show');
-      document.body.style.overflow = 'hidden';
-      
-      // Auto-redirect after 5 seconds
-      let countdown = 5;
-      const countdownDisplay = document.getElementById('redirectCountdown');
-      
-      if (countdownDisplay) {
-        countdownDisplay.textContent = countdown;
-        
-        const countdownInterval = setInterval(() => {
-          countdown--;
-          countdownDisplay.textContent = countdown;
-          
-          if (countdown <= 0) {
-            clearInterval(countdownInterval);
-            sendToBotpressAndRedirect(orderNumber, orderDetails, totalAmount, customerData);
-          }
-        }, 1000);
-      }
-
-
-      document.addEventListener('DOMContentLoaded', () => {
-    // 1. Define the input element and the URL parameter name
-    const inputField = document.getElementById('whatsappNumberInput');
-    
-    // Check if the input field actually exists before proceeding
-    if (!inputField) {
-        console.error("HTML Error: Could not find the hidden input field with ID 'whatsappNumberInput'.");
-        return;
-    }
-
-    // 2. Capture the URL parameter
-    const params = new URLSearchParams(window.location.search);
-    const rawNumber = params.get('whatsappNumber'); // <--- This must match your URL exactly!
-
-    // 3. Process and store the number
-    if (rawNumber) {
-        // Optional: Data Cleaning (Strips out dashes, spaces, etc., to ensure a clean number)
-        const cleanNumber = rawNumber.replace(/\D/g, '').trim(); 
-        
-        // Store the cleaned number in the hidden input field
-        inputField.value = cleanNumber;
-        
-        console.log("Successfully captured and stored WhatsApp Number:", cleanNumber);
-        
-    } else {
-        console.warn("No 'whatsappNumber' parameter found in the URL.");
-    }
-});
-
-      
-    }
-
-    
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
