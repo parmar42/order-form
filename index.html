@@ -483,7 +483,7 @@
           <div class="form-group">
             <label for="phoneNumber">Phone Number <span class="required">*</span></label>
             <input type="tel" id="phoneNumber" required placeholder="246-XXX-XXXX">
-            <input type="hidden" name="whatsappNumber" value="userPhone">
+            <input type="hidden" name="userPhone" value="phone">
           </div>
           
           <div class="form-group">
@@ -914,48 +914,13 @@
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyGc3g4jdYWAckG-ZXmBzTI0DmYqvBAIyQ4bLnc3DbujzDa62ySmwFy7RMpoqQ-2tYqTg/exec';
     
     // ✅ Capture WhatsApp number from URL (?whatsapp=whatsapp:+1246...)?phone={{event.tags.conversation['whatsapp:userPhone']}}
- function getPhoneNumberFromUrl() {
-  // 1. Get the full query string part of the URL (e.g., "?phoneNumber=...&orderType=...")
-  const queryString = window.location.search;
+    const params = new URLSearchParams(window.location.search)
+                const phone = params.get('phone')
 
-  // 2. Create a URLSearchParams object to easily parse the parameters
-  const params = new URLSearchParams(queryString);
+                if (phone) {
+                  document.getElementById('phone').value = phone
+   }
 
-  // 3. Get the value of the 'phoneNumber' parameter
-  const phone = params.get('phone');
-
-  // 4. Return the phone number (or null if it wasn't in the URL)
-  return phoneNumber;
-}
-
-// Example usage:
-const capturedPhone = getPhoneNumberFromUrl();
-
-if (capturedPhone) {
-  console.log("Phone number found:", capturedPhone);
-  // You would typically use this value to pre-fill an HTML input field
-  // document.getElementById('phoneNumberInput').value = capturedPhone;
-} else {
-  console.log("No phone number found in URL.");
-}
-    let orderItems = [];
-    
-    // Category toggle
-    document.querySelectorAll('.category-header').forEach(header => {
-      header.addEventListener('click', function() {
-        const targetId = this.getAttribute('data-target');
-        const target = document.getElementById(targetId);
-        const isShown = target.classList.contains('show');
-        
-        document.querySelectorAll('.menu-items').forEach(items => items.classList.remove('show'));
-        document.querySelectorAll('.category-header').forEach(h => h.classList.remove('active'));
-        
-        if (!isShown) {
-          target.classList.add('show');
-          this.classList.add('active');
-        }
-      });
-    });
     
     // Menu item selection
     document.querySelectorAll('.menu-item').forEach(item => {
@@ -1165,7 +1130,18 @@ if (capturedPhone) {
       }
     });
 
-       // Success Modal Functions with Botpress Integration
+          
+    function showMessage(text, type) {
+      const msg = document.getElementById('message');
+      msg.textContent = text;
+      msg.className = 'message ' + type;
+      msg.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      setTimeout(() => msg.style.display = 'none', 8000);
+    }
+
+     // Success Modal Functions with Botpress Integration
     function showSuccessModal(orderNumber, orderDetails, totalAmount, customerData) {
       document.getElementById('modalOrderNumber').textContent = orderNumber;
       document.getElementById('successModal').classList.add('show');
@@ -1189,19 +1165,10 @@ if (capturedPhone) {
         }, 1000);
       }
     }
-    
-    function showMessage(text, type) {
-      const msg = document.getElementById('message');
-      msg.textContent = text;
-      msg.className = 'message ' + type;
-      msg.style.display = 'block';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      
-      setTimeout(() => msg.style.display = 'none', 8000);
-    }
   </script>
 </body>
 </html>
+
 
 
 
