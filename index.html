@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>East Moon Chinese Cuisine & Bar Restaurant - Order Online</title>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>East Moon Restaurant - Order Online</title>
   <style>
     * {
       margin: 0;
@@ -18,6 +19,7 @@
       background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
       min-height: 100vh;
       padding: 0;
+      overflow-x: hidden;
     }
     
     .container {
@@ -25,29 +27,118 @@
       margin: 0 auto;
       background: white;
       min-height: 100vh;
+      position: relative;
     }
     
+    /* Header */
     .header {
       background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
       color: white;
       padding: 20px;
       text-align: center;
       box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      position: sticky;
+      top: 0;
+      z-index: 200;
     }
     
     .header h1 {
-      font-size: 24px;
+      font-size: clamp(20px, 5vw, 28px);
       margin-bottom: 5px;
     }
     
     .header p {
-      font-size: 14px;
+      font-size: clamp(12px, 3vw, 14px);
       opacity: 0.95;
     }
     
+    /* Search Bar */
+    .search-container {
+      position: sticky;
+      top: 80px;
+      background: white;
+      padding: 15px;
+      z-index: 150;
+      border-bottom: 2px solid #e0e0e0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .search-wrapper {
+      position: relative;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 12px 40px 12px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 25px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: #DC143C;
+    }
+    
+    .search-icon {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+      font-size: 18px;
+      pointer-events: none;
+    }
+    
+    /* Category Tabs */
+    .category-tabs {
+      position: sticky;
+      top: 150px;
+      background: white;
+      z-index: 100;
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
+      padding: 15px 10px;
+      border-bottom: 2px solid #e0e0e0;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    .category-tabs::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .category-tab {
+      display: inline-block;
+      padding: 10px 18px;
+      margin: 0 5px;
+      background: #f8f9fa;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 14px;
+      font-weight: 600;
+      color: #666;
+      border: 2px solid transparent;
+    }
+    
+    .category-tab:active {
+      transform: scale(0.95);
+    }
+    
+    .category-tab.active {
+      background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+      color: white;
+      border-color: #8B0000;
+    }
+    
+    /* Form Content */
     .form-content {
       padding: 15px;
-      padding-bottom: 80px;
+      padding-bottom: 200px;
     }
     
     .form-section {
@@ -56,7 +147,7 @@
     
     .section-title {
       color: #8B0000;
-      font-size: 18px;
+      font-size: clamp(16px, 4vw, 18px);
       font-weight: 700;
       margin-bottom: 15px;
       border-bottom: 2px solid #DC143C;
@@ -72,7 +163,7 @@
       color: #333;
       font-weight: 600;
       margin-bottom: 8px;
-      font-size: 15px;
+      font-size: clamp(14px, 3.5vw, 15px);
     }
     
     input[type="text"],
@@ -80,7 +171,7 @@
     textarea,
     select {
       width: 100%;
-      padding: 12px;
+      padding: 14px;
       border: 2px solid #e0e0e0;
       border-radius: 8px;
       font-size: 16px;
@@ -112,54 +203,33 @@
       color: #DC143C;
     }
     
-    .category-header {
-      background: #f8f9fa;
-      padding: 12px 15px;
-      margin: 15px 0 10px 0;
-      border-left: 4px solid #DC143C;
-      font-weight: 600;
-      color: #333;
-      cursor: pointer;
-      user-select: none;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-radius: 5px;
-      transition: background 0.3s;
-    }
-    
-    .category-header:active {
-      background: #e9ecef;
-    }
-    
-    .category-header .arrow {
-      transition: transform 0.3s;
-      font-size: 20px;
-    }
-    
-    .category-header.active .arrow {
-      transform: rotate(180deg);
-    }
-    
-    .menu-items {
+    /* Category Content */
+    .category-content {
       display: none;
-      margin-bottom: 15px;
     }
     
-    .menu-items.show {
+    .category-content.active {
       display: block;
+      animation: fadeIn 0.3s ease-in;
     }
     
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Menu Items */
     .menu-item {
       display: flex;
       align-items: flex-start;
-      padding: 12px;
+      padding: 14px;
       border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      margin-bottom: 10px;
+      border-radius: 10px;
+      margin-bottom: 12px;
       cursor: pointer;
       transition: all 0.3s;
       background: white;
+      touch-action: manipulation;
     }
     
     .menu-item:active {
@@ -169,6 +239,7 @@
     .menu-item.selected {
       border-color: #DC143C;
       background-color: #ffe6e6;
+      box-shadow: 0 2px 8px rgba(220, 20, 60, 0.2);
     }
     
     .item-checkbox {
@@ -182,31 +253,35 @@
     
     .item-info {
       flex: 1;
+      min-width: 0;
     }
     
     .item-name {
       font-weight: 600;
       color: #333;
-      font-size: 15px;
+      font-size: clamp(14px, 3.5vw, 15px);
       margin-bottom: 3px;
+      word-wrap: break-word;
     }
     
     .item-description {
-      font-size: 13px;
+      font-size: clamp(12px, 3vw, 13px);
       color: #666;
       font-style: italic;
       line-height: 1.4;
+      word-wrap: break-word;
     }
     
     .item-price {
       color: #DC143C;
       font-weight: bold;
-      font-size: 16px;
+      font-size: clamp(15px, 4vw, 16px);
       margin-left: 10px;
       white-space: nowrap;
       flex-shrink: 0;
     }
     
+    /* Quantity Controls */
     .quantity-control {
       display: none;
       align-items: center;
@@ -220,8 +295,8 @@
     }
     
     .qty-btn {
-      width: 35px;
-      height: 35px;
+      width: 36px;
+      height: 36px;
       border: 2px solid #DC143C;
       background: white;
       color: #DC143C;
@@ -233,6 +308,7 @@
       align-items: center;
       justify-content: center;
       transition: all 0.2s;
+      touch-action: manipulation;
     }
     
     .qty-btn:active {
@@ -248,18 +324,47 @@
       font-size: 16px;
     }
     
+    /* Order Summary - Sticky at bottom */
     .order-summary {
-      background: #f8f9fa;
-      padding: 20px;
-      border-radius: 8px;
-      margin: 20px 0;
-      border: 2px solid #e0e0e0;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: 15px;
+      border-top: 3px solid #DC143C;
+      box-shadow: 0 -4px 10px rgba(0,0,0,0.15);
+      z-index: 250;
+      max-height: 50vh;
+      overflow-y: auto;
+      display: none;
     }
     
-    .order-summary h4 {
-      color: #8B0000;
-      margin-bottom: 15px;
-      font-size: 18px;
+    .order-summary.show {
+      display: block;
+    }
+    
+    .summary-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+      color: white;
+      cursor: pointer;
+      border-radius: 8px 8px 0 0;
+      margin: -15px -15px 15px -15px;
+      font-weight: 700;
+    }
+    
+    .summary-toggle:active {
+      opacity: 0.9;
+    }
+    
+    .summary-items {
+      max-height: 150px;
+      overflow-y: auto;
+      margin-bottom: 10px;
     }
     
     .summary-item {
@@ -267,7 +372,7 @@
       justify-content: space-between;
       padding: 8px 0;
       border-bottom: 1px solid #dee2e6;
-      font-size: 14px;
+      font-size: clamp(13px, 3.5vw, 14px);
     }
     
     .summary-subtotal {
@@ -275,7 +380,7 @@
       justify-content: space-between;
       padding: 12px 0 8px 0;
       font-weight: 600;
-      font-size: 16px;
+      font-size: clamp(15px, 4vw, 16px);
       color: #333;
       border-top: 2px solid #dee2e6;
       margin-top: 8px;
@@ -284,14 +389,15 @@
     .summary-total {
       display: flex;
       justify-content: space-between;
-      padding: 15px 0 5px 0;
+      padding: 12px 0;
       font-weight: 700;
-      font-size: 20px;
+      font-size: clamp(18px, 5vw, 20px);
       color: #8B0000;
       border-top: 3px solid #DC143C;
       margin-top: 8px;
     }
     
+    /* Submit Button */
     .submit-btn {
       width: 100%;
       padding: 16px;
@@ -299,10 +405,12 @@
       color: white;
       border: none;
       border-radius: 8px;
-      font-size: 18px;
+      font-size: clamp(16px, 4vw, 18px);
       font-weight: 600;
       cursor: pointer;
-      margin-top: 20px;
+      margin-top: 15px;
+      touch-action: manipulation;
+      box-shadow: 0 4px 10px rgba(139, 0, 0, 0.3);
     }
     
     .submit-btn:active {
@@ -315,12 +423,13 @@
       opacity: 0.6;
     }
     
+    /* Messages */
     .message {
       padding: 15px;
       border-radius: 8px;
       margin-bottom: 20px;
       display: none;
-      font-size: 15px;
+      font-size: clamp(14px, 3.5vw, 15px);
     }
     
     .message.success {
@@ -335,6 +444,7 @@
       border: 1px solid #f5c6cb;
     }
     
+    /* Loading */
     .loading {
       display: none;
       text-align: center;
@@ -359,6 +469,144 @@
       100% { transform: rotate(360deg); }
     }
     
+    /* Success Modal */
+    .success-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(5px);
+    }
+    
+    .success-modal.show {
+      display: flex;
+    }
+    
+    .success-modal-content {
+      background: white;
+      border-radius: 15px;
+      padding: 30px 20px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      animation: slideUp 0.4s ease-out;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    
+    .success-checkmark {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: #28a745;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 45px;
+      color: white;
+      animation: scaleIn 0.5s ease-out;
+    }
+    
+    @keyframes scaleIn {
+      0% { transform: scale(0); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    
+    .success-modal h2 {
+      color: #28a745;
+      margin-bottom: 15px;
+      font-size: clamp(22px, 6vw, 28px);
+    }
+    
+    .success-modal .order-number {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      border-left: 4px solid #DC143C;
+    }
+    
+    .success-modal .order-number span {
+      color: #666;
+      font-size: clamp(13px, 3.5vw, 14px);
+    }
+    
+    .success-modal .order-number strong {
+      color: #8B0000;
+      font-size: clamp(20px, 5vw, 24px);
+      display: block;
+      margin-top: 5px;
+      letter-spacing: 1px;
+    }
+    
+    .success-modal .info-box {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 20px 0;
+      color: #856404;
+      text-align: left;
+    }
+    
+    .success-modal .info-box strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: clamp(15px, 4vw, 16px);
+    }
+    
+    .success-modal p {
+      color: #666;
+      line-height: 1.6;
+      margin: 15px 0;
+      font-size: clamp(14px, 3.5vw, 15px);
+    }
+    
+    .countdown-box {
+      margin: 25px 0;
+      padding: 20px;
+      background: #e3f2fd;
+      border-radius: 10px;
+      border-left: 4px solid #2196F3;
+    }
+    
+    .countdown-box p {
+      color: #1976d2;
+      margin: 0;
+      font-size: clamp(16px, 4vw, 18px);
+      font-weight: 600;
+    }
+    
+    .countdown-number {
+      font-size: clamp(36px, 10vw, 48px);
+      font-weight: bold;
+      color: #DC143C;
+      display: block;
+      margin: 10px 0;
+    }
+    
+    /* Responsive Breakpoints */
     @media (min-width: 600px) {
       .header h1 {
         font-size: 32px;
@@ -382,14 +630,74 @@
       .form-content {
         padding: 30px;
       }
+      
+      .search-container {
+        top: 90px;
+      }
+      
+      .category-tabs {
+        top: 165px;
+      }
+      
+      .order-summary {
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: 760px;
+        border-radius: 15px 15px 0 0;
+      }
+    }
+    
+    @media (max-width: 360px) {
+      .category-tab {
+        padding: 8px 14px;
+        font-size: 13px;
+      }
+      
+      .qty-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+      }
+    }
+    
+    /* Landscape orientation */
+    @media (orientation: landscape) and (max-height: 500px) {
+      .header {
+        padding: 10px;
+      }
+      
+      .search-container {
+        padding: 10px;
+      }
+      
+      .category-tabs {
+        padding: 10px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1>🥡 East Moon Chinese Cuisine & Bar</h1>
+      <h1>🥡 East Moon Restaurant</h1>
       <p>Place Your Order - Cash Only</p>
+    </div>
+    
+    <!-- Search Bar -->
+    <div class="search-container">
+      <div class="search-wrapper">
+        <input type="text" class="search-input" id="menuSearch" placeholder="Search menu...">
+        <span class="search-icon">🔍</span>
+      </div>
+    </div>
+    
+    <!-- Category Tabs -->
+    <div class="category-tabs" id="categoryTabs">
+      <div class="category-tab active" data-category="appetizers">🥟 Appetizers</div>
+      <div class="category-tab" data-category="fried-rice">🍚 Fried Rice</div>
+      <div class="category-tab" data-category="chow-mein">🍜 Chow Mein</div>
+      <div class="category-tab" data-category="sweet-sour">🍯 Sweet & Sour</div>
+      <div class="category-tab" data-category="cantonese">⭐ Specialties</div>
     </div>
     
     <div class="form-content">
@@ -399,9 +707,10 @@
         <p>Submitting your order...</p>
       </div>
       
-      <form id="orderForm" method="post" action="YOUR_URL_HERE">
+      <form id="orderForm">
         <div class="form-section">
           <div class="section-title">📋 Your Information</div>
+          
           <div class="form-group">
             <input type="hidden" id="whatsappNumber" name="whatsappNumber">
             <label for="customerName">Full Name <span class="required">*</span></label>
@@ -431,11 +740,8 @@
         <div class="form-section">
           <div class="section-title">🍜 Select Your Dishes</div>
           
-          <div class="category-header" data-target="appetizers">
-            <span>🥟 APPETIZERS</span>
-            <span class="arrow">▼</span>
-          </div>
-          <div id="appetizers" class="menu-items">
+          <!-- APPETIZERS -->
+          <div id="appetizers" class="category-content active">
             <div class="menu-item" data-item="Spring Roll (1)" data-price="6.00">
               <input type="checkbox" class="item-checkbox">
               <div class="item-info">
@@ -502,11 +808,8 @@
             </div>
           </div>
           
-          <div class="category-header" data-target="fried-rice">
-            <span>🍚 FRIED RICE</span>
-            <span class="arrow">▼</span>
-          </div>
-          <div id="fried-rice" class="menu-items">
+          <!-- FRIED RICE -->
+          <div id="fried-rice" class="category-content">
             <div class="menu-item" data-item="Special Fried Rice" data-price="34.00">
               <input type="checkbox" class="item-checkbox">
               <div class="item-info">
@@ -615,11 +918,8 @@
             </div>
           </div>
           
-          <div class="category-header" data-target="chow-mein">
-            <span>🍜 CHOW MEIN</span>
-            <span class="arrow">▼</span>
-          </div>
-          <div id="chow-mein" class="menu-items">
+          <!-- CHOW MEIN -->
+          <div id="chow-mein" class="category-content">
             <div class="menu-item" data-item="Chinese Chow Mein" data-price="33.00">
               <input type="checkbox" class="item-checkbox">
               <div class="item-info">
@@ -675,11 +975,8 @@
             </div>
           </div>
           
-          <div class="category-header" data-target="sweet-sour">
-            <span>🍯 SWEET & SOUR</span>
-            <span class="arrow">▼</span>
-          </div>
-          <div id="sweet-sour" class="menu-items">
+          <!-- SWEET & SOUR -->
+          <div id="sweet-sour" class="category-content">
             <div class="menu-item" data-item="Sweet & Sour Spare Ribs" data-price="40.00">
               <input type="checkbox" class="item-checkbox">
               <div class="item-info">
@@ -720,11 +1017,8 @@
             </div>
           </div>
           
-          <div class="category-header" data-target="cantonese">
-            <span>⭐ CANTONESE SPECIALTIES</span>
-            <span class="arrow">▼</span>
-          </div>
-          <div id="cantonese" class="menu-items">
+          <!-- CANTONESE SPECIALTIES -->
+          <div id="cantonese" class="category-content">
             <div class="menu-item" data-item="Great Wok Fried Shelled Shrimp" data-price="43.00">
               <input type="checkbox" class="item-checkbox">
               <div class="item-info">
@@ -783,91 +1077,384 @@
           </div>
         </div>
         
-        <div class="order-summary" id="orderSummary" style="display:none;">
-          <h4>📋 Your Order</h4>
-          <div id="summaryItems"></div>
-          <div id="summaryCalculations"></div>
-        </div>
-        
         <div class="form-section">
           <div class="section-title">📝 Special Instructions</div>
           <div class="form-group">
             <textarea id="specialInstructions" placeholder="Optional - any special requests or dietary restrictions"></textarea>
           </div>
         </div>
-        
-        <button type="submit" class="submit-btn" id="submitBtn" disabled>Submit Order</button>
       </form>
+    </div>
+    
+    <!-- Sticky Order Summary at Bottom -->
+    <div class="order-summary" id="orderSummary">
+      <div class="summary-toggle" id="summaryToggle">
+        <span>📋 Your Order (<span id="itemCount">0</span> items)</span>
+        <span id="toggleArrow">▲</span>
+      </div>
+      <div id="summaryContent">
+        <div class="summary-items" id="summaryItems"></div>
+        <div id="summaryCalculations"></div>
+        <button type="submit" class="submit-btn" id="submitBtn" form="orderForm">Submit Order</button>
+      </div>
     </div>
   </div>
 
-<script>
+  <!-- Success Modal -->
+  <div id="successModal" class="success-modal">
+    <div class="success-modal-content">
+      <div class="success-checkmark">✓</div>
+      <h2>Order Confirmed! 🎉</h2>
+      
+      <div class="order-number">
+        <span>Your Order Number:</span>
+        <strong id="modalOrderNumber">EM12121234</strong>
+      </div>
+      
+      <p>Thank you for your order! We've received it and you'll receive a WhatsApp confirmation shortly.</p>
+      
+      <div class="info-box">
+        <strong>📱 Check Your WhatsApp!</strong>
+        You'll receive your order confirmation via WhatsApp in a few moments.
+      </div>
+      
+      <p style="font-size: 14px; margin-top: 15px;">
+        <strong>Payment:</strong> Cash only on delivery or pickup.
+      </p>
+      
+      <!-- Countdown Display -->
+      <div class="countdown-box">
+        <p>Redirecting to WhatsApp in</p>
+        <span id="redirectCountdown" class="countdown-number">5</span>
+      </div>
+      
+      <p style="font-size: 13px; color: #999; text-align: center; margin-top: 10px;">
+        Please wait while we open WhatsApp...
+      </p>
+    </div>
+  </div>
 
-/* ============================
-   CONFIG
-============================ */
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyGc3g4jdYWAckG-ZXmBzTI0DmYqvBAIyQ4bLnc3DbujzDa62ySmwFy7RMpoqQ-2tYqTg/exec';
+  <script>
+    // Configuration
+    const SCRIPT_URL = 'https://xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+    
+    
+    let orderItems = [];
+    let summaryExpanded = true;
+    
+      
+   // ============================================
+// CAPTURE WHATSAPP NUMBER FROM URL (HIDDEN)
+// ============================================
+const urlParams = new URLSearchParams(window.location.search);
+const whatsappFromUrl = urlParams.get('whatsappNumber');
 
-/* ============================
-   GLOBAL STATE
-============================ */
-let orderItems = [];
-let summaryExpanded = true;
+window.addEventListener('DOMContentLoaded', () => {
+  if (whatsappFromUrl) {
+    // Strip everything except digits
+    const cleaned = whatsappFromUrl.replace(/\D/g, '');
 
-/* ============================
-   CAPTURE WHATSAPP NUMBER
-============================ */
-const params = new URLSearchParams(window.location.search);
-const whatsappNumber = params.get('whatsappNumber');
+    // Store in hidden field
+    document.getElementById('whatsappNumber').value = cleaned;
 
-if (whatsappNumber) {
-  document.getElementById('whatsappNumber').value =
-    whatsappNumber.replace(/\D/g, '');
-}
+    console.log('WhatsApp number (hidden):', cleaned);
+  }
+});
 
-/* ============================
-   FORM SUBMIT
-============================ */
-const form = document.getElementById('orderForm');
-
-form.addEventListener('submit', async (e) => {
+    
+    // Category tab switching
+    document.querySelectorAll('.category-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        // Remove active from all
+        document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.category-content').forEach(c => c.classList.remove('active'));
+        
+        // Add active to clicked
+        this.classList.add('active');
+        const category = this.getAttribute('data-category');
+        document.getElementById(category).classList.add('active');
+        
+        // Scroll tab into view
+        this.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      });
+    });
+    
+    // Search functionality
+    document.getElementById('menuSearch').addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      
+      if (searchTerm === '') {
+        // Show all items
+        document.querySelectorAll('.menu-item').forEach(item => {
+          item.style.display = 'flex';
+        });
+        return;
+      }
+      
+      // Filter items
+      document.querySelectorAll('.menu-item').forEach(item => {
+        const itemName = item.getAttribute('data-item').toLowerCase();
+        const itemDesc = item.querySelector('.item-description');
+        const descText = itemDesc ? itemDesc.textContent.toLowerCase() : '';
+        
+        if (itemName.includes(searchTerm) || descText.includes(searchTerm)) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+    
+    // Summary toggle
+    document.getElementById('summaryToggle').addEventListener('click', function() {
+      summaryExpanded = !summaryExpanded;
+      const content = document.getElementById('summaryContent');
+      const arrow = document.getElementById('toggleArrow');
+      
+      if (summaryExpanded) {
+        content.style.display = 'block';
+        arrow.textContent = '▲';
+      } else {
+        content.style.display = 'none';
+        arrow.textContent = '▼';
+      }
+    });
+    
+    // Menu item selection
+    document.querySelectorAll('.menu-item').forEach(item => {
+      const checkbox = item.querySelector('.item-checkbox');
+      
+      checkbox.addEventListener('change', function() {
+        if (this.checked) {
+          item.classList.add('selected');
+        } else {
+          item.classList.remove('selected');
+          item.querySelector('.qty-display').textContent = '1';
+        }
+        updateOrder();
+      });
+      
+      item.addEventListener('click', function(e) {
+        if (e.target.classList.contains('qty-btn') || e.target === checkbox) {
+          return;
+        }
+        checkbox.checked = !checkbox.checked;
+        checkbox.dispatchEvent(new Event('change'));
+      });
+    });
+    
+    // Quantity controls
+    document.querySelectorAll('.qty-plus').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const display = this.previousElementSibling;
+        let qty = parseInt(display.textContent);
+        qty++;
+        display.textContent = qty;
+        updateOrder();
+      });
+    });
+    
+    document.querySelectorAll('.qty-minus').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const display = this.nextElementSibling;
+        let qty = parseInt(display.textContent);
+        if (qty > 1) {
+          qty--;
+          display.textContent = qty;
+          updateOrder();
+        }
+      });
+    });
+    
+    document.getElementById('orderType').addEventListener('change', updateOrder);
+    
+    function updateOrder() {
+      orderItems = [];
+      let subtotal = 0;
+      
+      document.querySelectorAll('.menu-item.selected').forEach(item => {
+        const name = item.getAttribute('data-item');
+        const price = parseFloat(item.getAttribute('data-price'));
+        const qty = parseInt(item.querySelector('.qty-display').textContent);
+        const itemSubtotal = price * qty;
+        
+        orderItems.push({
+          name: name,
+          price: price,
+          quantity: qty,
+          subtotal: itemSubtotal
+        });
+        
+        subtotal += itemSubtotal;
+      });
+      
+      const summaryDiv = document.getElementById('orderSummary');
+      const summaryItems = document.getElementById('summaryItems');
+      const summaryCalculations = document.getElementById('summaryCalculations');
+      const submitBtn = document.getElementById('submitBtn');
+      const itemCount = document.getElementById('itemCount');
+      const orderType = document.getElementById('orderType').value;
+      
+      if (orderItems.length > 0) {
+        summaryDiv.classList.add('show');
+        itemCount.textContent = orderItems.length;
+        
+        summaryItems.innerHTML = orderItems.map(item => `
+          <div class="summary-item">
+            <span>${item.name} × ${item.quantity}</span>
+            <span>$${item.subtotal.toFixed(2)}</span>
+          </div>
+        `).join('');
+        
+        let total = subtotal;
+        let calculationsHTML = `
+          <div class="summary-subtotal">
+            <span>Subtotal:</span>
+            <span>$${subtotal.toFixed(2)}</span>
+          </div>
+        `;
+        
+        if (orderType === 'Delivery') {
+          const serviceCharge = subtotal * 0.10;
+          total = subtotal + serviceCharge;
+          calculationsHTML += `
+            <div class="summary-item">
+              <span>Service Charge (10%):</span>
+              <span>$${serviceCharge.toFixed(2)}</span>
+            </div>
+          `;
+        }
+        
+        calculationsHTML += `
+          <div class="summary-total">
+            <span>TOTAL:</span>
+            <span>$${total.toFixed(2)} BBD</span>
+          </div>
+        `;
+        
+        summaryCalculations.innerHTML = calculationsHTML;
+        submitBtn.disabled = false;
+      } else {
+        summaryDiv.classList.remove('show');
+        itemCount.textContent = '0';
+        submitBtn.disabled = true;
+      }
+    }
+    
+    // Success Modal
+    function showSuccessModal(orderNumber) {
+      document.getElementById('modalOrderNumber').textContent = orderNumber;
+      document.getElementById('successModal').classList.add('show');
+      document.body.style.overflow = 'hidden';
+      
+      let countdown = 5;
+      const countdownDisplay = document.getElementById('redirectCountdown');
+      
+      if (countdownDisplay) {
+        countdownDisplay.textContent = countdown;
+        
+        const countdownInterval = setInterval(() => {
+          countdown--;
+          countdownDisplay.textContent = countdown;
+          
+          if (countdown <= 0) {
+            clearInterval(countdownInterval);
+            window.location.href = `https://wa.me/${WHATSAPP_NUMBER}`;
+          }
+        }, 1000);
+      }
+    }
+    
+    // Form submission
+   document.getElementById('orderForm').addEventListener('submit', async function(e) {
   e.preventDefault();
 
+  if (orderItems.length === 0) {
+    showMessage('Please select at least one item', 'error');
+    return;
+  }
+
+  const customerName = document.getElementById('customerName').value.trim();
+  const phoneNumber = document.getElementById('phoneNumber').value.trim();
+  const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
+  const orderType = document.getElementById('orderType').value;
+  const specialInstructions = document.getElementById('specialInstructions').value.trim();
+
+  if (!orderType) {
+    showMessage('Please select order type', 'error');
+    return;
+  }
+
+  let subtotal = orderItems.reduce((sum, item) => sum + item.subtotal, 0);
+  let total = orderType === 'Delivery' ? subtotal * 1.10 : subtotal;
+  const orderDetails = orderItems.map(item => `${item.name} x${item.quantity} = $${item.subtotal.toFixed(2)}`).join('\n');
+  const totalAmount = '$' + total.toFixed(2) + ' BBD';
+
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Submitting...';
   document.getElementById('loading').style.display = 'block';
 
-  const body = new URLSearchParams({
-    customerName: document.getElementById('customerName').value,
-    phoneNumber: document.getElementById('phoneNumber').value, // user typed
-    whatsappNumber: document.getElementById('whatsappNumber').value, // Botpress
-    deliveryAddress: document.getElementById('deliveryAddress').value,
-    orderType: document.getElementById('orderType').value,
-    orderItems: JSON.stringify(orderItems),
-    totalAmount: calculateTotal(), // assumes you already have this
-    notes: document.getElementById('specialInstructions').value || ''
+  const params = new URLSearchParams({
+    customerName,
+    phoneNumber,
+    deliveryAddress,
+    orderType,
+    orderItems: orderDetails,
+    totalAmount,
+    specialInstructions: specialInstructions || 'None'
   });
 
   try {
-    const res = await fetch(SCRIPT_URL, {
+    const response = await fetch(SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body
+      body: params.toString()
     });
 
-    const data = await res.json();
+    const result = await response.json(); // <-- parse the response
+
     document.getElementById('loading').style.display = 'none';
 
-    if (data.success) {
-      alert(`Order submitted! Order #${data.orderNumber}`);
-      form.reset();
+    if (result.success) {
+      showSuccessModal(result.orderNumber); // ✅ modal will show
+
+      document.getElementById('orderForm').reset();
+      document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+      document.querySelectorAll('.category-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.category-tab').forEach(el => el.classList.remove('active'));
+      document.querySelector('.category-tab').classList.add('active');
+      document.querySelector('.category-content').classList.add('active');
       orderItems = [];
-    } else {
-      alert(data.message || 'Submission failed');
-    }
+      updateOrder();
 
-  } catch (err) {
+      submitBtn.textContent = 'Submit Order';
+      submitBtn.disabled = false;
+    } else {
+      showMessage('✗ ' + (result.message || 'Error submitting order'), 'error');
+      submitBtn.textContent = 'Submit Order';
+      submitBtn.disabled = false;
+    }
+  } catch (error) {
+    console.error('Error:', error);
     document.getElementById('loading').style.display = 'none';
-    alert('Error submitting order');
-    console.error(err);
+    submitBtn.textContent = 'Submit Order';
+    submitBtn.disabled = false;
+    showMessage('✗ Error submitting order. Please try again.', 'error');
   }
 });
-</script>
+    
+    function showMessage(text, type) {
+      const msg = document.getElementById('message');
+      msg.textContent = text;
+      msg.className = 'message ' + type;
+      msg.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      setTimeout(() => msg.style.display = 'none', 8000);
+    }
+  </script>
+</body>
+</html>
