@@ -872,6 +872,41 @@
         <button type="submit" class="submit-btn" id="submitBtn" disabled>Submit Order</button>
       </form>
     </div>
+
+        <!-- Success Modal -->
+          <div id="successModal" class="success-modal">
+    <div class="success-modal-content">
+      <div class="success-checkmark">✓</div>
+      <h2>Order Confirmed! 🎉</h2>
+      
+      <div class="order-number">
+        <span>Your Order Number:</span>
+        <strong id="modalOrderNumber">EM12121234</strong>
+      </div>
+      
+      <p>
+        Thank you for your order! We've received it and you'll receive a WhatsApp confirmation shortly.
+      </p>
+      
+      <div class="info-box">
+        <strong>📱 Check Your WhatsApp!</strong>
+        You'll receive your order confirmation via WhatsApp in a few moments.
+      </div>
+      
+      <p style="font-size: 14px; margin-top: 15px;">
+        <strong>Payment:</strong> Cash only on delivery or pickup.
+      </p>
+      
+      <!-- Countdown Display -->
+      <div class="countdown-box">
+        <p>Redirecting to WhatsApp in</p>
+        <span id="redirectCountdown" class="countdown-number">5</span>
+      </div>
+      
+      <p style="font-size: 13px; color: #999; text-align: center; margin-top: 10px;">
+        Please wait while we open WhatsApp...
+      </p>
+   
   </div>
 
   <script>
@@ -1121,4 +1156,5 @@
   </script>
 </body>
 </html>
+
 
