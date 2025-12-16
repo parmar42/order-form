@@ -399,9 +399,8 @@
         <p>Submitting your order...</p>
       </div>
       
-      <form id="orderForm" method="post" action="https://script.google.com/macros/s/AKfycbyGc3g4jdYWAckG-ZXmBzTI0DmYqvBAIyQ4bLnc3DbujzDa62ySmwFy7RMpoqQ-2tYqTg/exec">
+      <form id="orderForm" method="post" action="YOUR_URL_HERE">
         <div class="form-section">
-          <input type="hidden" id="whatsappNumberInput" name="whatsappNumber" value="">
           <div class="section-title">📋 Your Information</div>
           <div class="form-group">
             <label for="customerName">Full Name <span class="required">*</span></label>
@@ -411,6 +410,7 @@
           <div class="form-group">
             <label for="phoneNumber">Phone Number <span class="required">*</span></label>
             <input type="tel" id="phoneNumber" required placeholder="246-XXX-XXXX">
+            <input type="hidden" name="whatsappNumber" value="USER_NUMBER_HERE">
           </div>
           
           <div class="form-group">
@@ -806,7 +806,11 @@
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyGc3g4jdYWAckG-ZXmBzTI0DmYqvBAIyQ4bLnc3DbujzDa62ySmwFy7RMpoqQ-2tYqTg/exec';
     
     // ✅ Capture WhatsApp number from URL (?whatsapp=whatsapp:+1246...)
- 
+  const params = new URLSearchParams(window.location.search);
+  const whatsapp = params.get('whatsapp');
+  if (whatsapp) {
+    document.getElementById('whatsapp').value = whatsapp;
+  }
     let orderItems = [];
     
     // Category toggle
@@ -957,7 +961,6 @@
       
       const customerName = document.getElementById('customerName').value.trim();
       const phoneNumber = document.getElementById('phoneNumber').value.trim();
-      const whatsappNumberInput = document.getElementById('whatsappNumberInput').value.trim();
       const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
       const orderType = document.getElementById('orderType').value;
       const specialInstructions = document.getElementById('specialInstructions').value.trim();
@@ -986,7 +989,6 @@
       const params = new URLSearchParams({
         customerName: customerName,
         phoneNumber: phoneNumber,
-        whatsappNumberInput: whatsappNumberInput,
         deliveryAddress: deliveryAddress,
         orderType: orderType,
         orderItems: orderDetails,
@@ -1043,13 +1045,6 @@
       
       setTimeout(() => msg.style.display = 'none', 8000);
     }
-
-   
-
-    
   </script>
 </body>
 </html>
-
-
-
