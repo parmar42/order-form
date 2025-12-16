@@ -908,40 +908,6 @@
       
       if (orderItems.length > 0) {
         summaryDiv.style.display = 'block';
-
-
-        // ... (Data collection lines) ...
-
-// 1. Check Order Type (The one you have)
-if (orderType === "" || orderType === "none") {
-    showMessage('Please select order type', 'error');
-    // Implement iOS Fix: focus, scrollIntoView, and return
-    return; 
-}
-
-// 2. Check Customer Name
-if (customerName === "") {
-    showMessage('Please enter your name', 'error');
-    // Implement focus, scrollIntoView, and return
-    return;
-}
-
-// 3. Check Phone Number
-if (phoneNumber === "") {
-    showMessage('Please enter your phone number', 'error');
-    // Implement focus, scrollIntoView, and return
-    return;
-}
-
-// 4. Conditional Check for Delivery Address
-if (orderType === "delivery" && deliveryAddress === "") {
-    showMessage('Please provide a delivery address', 'error');
-    // Implement focus, scrollIntoView, and return
-    return;
-}
-
-// ... If execution reaches this point, validation passed! ...
-// sendDataToServer();
         
         summaryItems.innerHTML = orderItems.map(item => `
           <div class="summary-item">
