@@ -361,32 +361,45 @@
     }
     
     /* Success Modal Styles */
+   /* --- FIXED SUCCESS MODAL FOR ANDROID --- */
     .success-modal {
       display: none;
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
+      height: 100%; 
+      /* Use dvh (Dynamic Viewport Height) if browser supports it */
+      height: 100dvh; 
+      background: rgba(0, 0, 0, 0.85);
       z-index: 9999;
-      align-items: center;
+      
+      /* Changed from center to flex-start + padding to prevent cutoff */
+      display: none; 
+      align-items: flex-start; 
       justify-content: center;
       padding: 20px;
+      overflow-y: auto; /* Allows scrolling if the phone is small */
       backdrop-filter: blur(5px);
+      -webkit-overflow-scrolling: touch;
     }
-    
+
     .success-modal.show {
       display: flex;
     }
     
+    
     .success-modal-content {
       background: white;
       border-radius: 15px;
-      padding: 40px;
+      padding: 30px 20px; /* Adjusted padding for better mobile fit */
       max-width: 500px;
       width: 100%;
       text-align: center;
+      /* Margin auto handles the vertical centering safely */
+      margin-top: auto;
+      margin-bottom: auto;
+      position: relative;
       animation: slideUp 0.4s ease-out;
       box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     }
