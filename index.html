@@ -1211,10 +1211,10 @@
       let total = orderType === 'Delivery' ? subtotal * 1.10 : subtotal;
       
       const orderDetails = orderItems.map(item => 
-        `${_item.name_} x${_item.quantity_} = _$_${_item.subtotal.toFixed(2)_}`
+        `_${item.name} x${item.quantity}_ = _$${item.subtotal.toFixed(2)}_`
       ).join('\n');
       
-      const totalAmount = _'$'_ + _total.toFixed(2)_ + _' BBD'_;
+      const totalAmount = '$' + total.toFixed(2)+ ' BBD';
       
       // Show loading state
       document.getElementById('loading').style.display = 'block';
