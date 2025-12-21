@@ -584,10 +584,10 @@
             <span class="arrow">▼</span>
           </div>
           <div id="appetizers" class="menu-items">
-            <div class="menu-item" data-item="Spring Roll (1)" data-price="6.00">
+            <div class="menu-item" data-item="Spring Roll" data-price="6.00">
               <input type="checkbox" class="item-checkbox">
               <div class="item-info">
-                <div class="item-name">Spring Roll (1)</div>
+                <div class="item-name">Spring Roll</div>
               </div>
               <span class="item-price">$6.00</span>
               <div class="quantity-control">
@@ -1211,7 +1211,7 @@
       let total = orderType === 'Delivery' ? subtotal * 1.10 : subtotal;
       
       const orderDetails = orderItems.map(item => 
-        `${item.name} (${item.quantity}) = $${item.subtotal.toFixed(2)}`
+        `${item.name} x${item.quantity} = $${item.subtotal.toFixed(2)}`
       ).join('\n');
       
       const totalAmount = '$' + total.toFixed(2) + ' BBD';
